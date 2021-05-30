@@ -1,0 +1,47 @@
+version: '3'
+services:
+  dc-elasticsearch:
+    image: elasticsearch:7.12.1
+    container_name: dc-elasticsearch
+    environment:
+      - "cluster.name=elasticsearch"
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Shanghai
+    volumes:
+      - /mydata/dc/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - /mydata/dc/elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+  dc-kibana:
+    image: kibana:7.12.1
+    container_name: dc-kibana
+    links:
+      - elasticsearch:es
+    depends_on:
+      - dc-elasticsearch
+    environment:
+      - "elasticsearch.hosts=http://es:9200"
+      - TZ=Asia/Shanghai
+    ports:
+      - 5601:5601
+  # 需安装json_lines插件：docker exec -it logstash /bin/bash  cd /bin/ logstash-plugin install logstash-codec-json_lines
+  dc-logstash:
+    image: logstash:7.12.1
+    container_name: dc-logstash
+    environment:
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+      - TZ=Asia/Shanghai
+    volumes:
+      # 需要手动创建logstash.yml文件
+      - /mydata/dc/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - /mydata/dc/logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - dc-elasticsearch
+    links:
+      - dc-elasticsearch:es
+    ports:
+      - 4560:4560
+      - 4561:4561
+      - 4562:4562
+      - 4563:4563

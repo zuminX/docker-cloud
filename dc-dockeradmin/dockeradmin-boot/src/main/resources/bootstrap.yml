@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: dc-dockeradmin
+
+common:
+  core:
+    projectPackage: 'com.zumin.dc.dockeradmin'
+  web:
+    api:
+      title: 'Docker管理'
+      description: '管理Docker的接口'

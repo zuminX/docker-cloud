@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.zumin.dc.common.core.config.CommonCoreProperties,\
+  com.zumin.dc.common.core.service.FileService,\
+  com.zumin.dc.common.core.utils.CoreUtils

@@ -1,9 +1,9 @@
 # Project exclude paths
-/sudoku-admin/admin-api/target/
-/sudoku-common/common-core/target/
-/sudoku-common/common-mybatis/target/
-/sudoku-common/common-redis/target/
-/sudoku-common/common-web/target/
-/sudoku-game/game-api/target/
-/sudoku-ums/ums-api/target/
+/dc-admin/admin-api/target/
+/dc-common/common-core/target/
+/dc-common/common-mybatis/target/
+/dc-common/common-redis/target/
+/dc-common/common-web/target/
+/dc-game/game-api/target/
+/dc-ums/ums-api/target/
 .idea

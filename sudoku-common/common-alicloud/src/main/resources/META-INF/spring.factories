@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.zumin.sudoku.common.alicloud.config.OSSConfig,\
-  com.zumin.sudoku.common.alicloud.service.OSSService

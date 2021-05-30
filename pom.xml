@@ -4,8 +4,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.zumin.sudoku</groupId>
-  <artifactId>sudoku-cloud</artifactId>
+  <groupId>com.zumin.dc</groupId>
+  <artifactId>docker-cloud</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
 
@@ -17,21 +17,21 @@
   </parent>
 
   <modules>
-    <module>sudoku-common</module>
-    <module>sudoku-gateway</module>
-    <module>sudoku-ums</module>
-    <module>sudoku-auth</module>
-    <module>sudoku-game</module>
-    <module>sudoku-admin</module>
-    <module>sudoku-monitor</module>
+    <module>dc-common</module>
+    <module>dc-gateway</module>
+    <module>dc-ums</module>
+    <module>dc-auth</module>
+    <module>dc-monitor</module>
+    <module>dc-dockeradmin</module>
+    <module>dc-dockerserve</module>
   </modules>
 
   <properties>
     <java.version>11</java.version>
-    <sudoku.version>1.0.0</sudoku.version>
+    <dc.version>1.0.0</dc.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <docker.host>http://localhost:2375</docker.host>
+    <docker.host>http://192.168.50.110:2375</docker.host>
     <docker.maven.plugin.version>1.2.2</docker.maven.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
@@ -40,7 +40,7 @@
     <lombok.version>1.18.12</lombok.version>
     <knife4j-micro.version>2.0.4</knife4j-micro.version>
     <knife4j.version>2.0.8</knife4j.version>
-    <hutool.version>5.4.3</hutool.version>
+    <hutool.version>5.6.5</hutool.version>
     <maven-compiler.version>3.8.1</maven-compiler.version>
     <xxl-job-core.version>2.2.0</xxl-job-core.version>
     <powermock.version>2.0.2</powermock.version>
@@ -50,6 +50,7 @@
     <mockito-core.version>3.6.0</mockito-core.version>
     <spring-boot-maven-plugin.version>2.3.3.RELEASE</spring-boot-maven-plugin.version>
     <nimbus-jose-jwt.version>8.16</nimbus-jose-jwt.version>
+    <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
   </properties>
 
   <dependencies>
@@ -147,47 +148,50 @@
 
       <!-- 工具模块 -->
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>common-core</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>common-mybatis</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>common-redis</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>common-web</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>common-alicloud</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>ums-api</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
-
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
+        <groupId>com.zumin.dc</groupId>
         <artifactId>auth-api</artifactId>
-        <version>${sudoku.version}</version>
+        <version>${dc.version}</version>
       </dependency>
-
       <dependency>
-        <groupId>com.zumin.sudoku</groupId>
-        <artifactId>admin-api</artifactId>
-        <version>${sudoku.version}</version>
+        <groupId>com.zumin.dc</groupId>
+        <artifactId>dockeradmin-api</artifactId>
+        <version>${dc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zumin.dc</groupId>
+        <artifactId>dockerserve-api</artifactId>
+        <version>${dc.version}</version>
       </dependency>
 
       <!-- 类型转换工具 -->
@@ -244,6 +248,13 @@
         <artifactId>nimbus-jose-jwt</artifactId>
         <version>${nimbus-jose-jwt.version}</version>
       </dependency>
+
+      <!-- ELK -->
+      <dependency>
+        <groupId>net.logstash.logback</groupId>
+        <artifactId>logstash-logback-encoder</artifactId>
+        <version>${logstash-logback-encoder.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -294,16 +305,16 @@
             </execution>
           </executions>
           <configuration>
-            <imageName>sudoku/${project.artifactId}:${project.version}</imageName>
+            <imageName>dc/${project.artifactId}:${project.version}</imageName>
 
             <!-- 基础镜像-->
-            <baseImage>openjdk:11.0.11-oraclelinux7</baseImage>
+            <baseImage>openjdk:11-jre</baseImage>
 
             <!-- 切换到容器工作目录-->
             <workdir>/</workdir>
 
             <!-- 指定远程 Docker API地址  -->
-            <dockerHost>http://192.168.50.110:2375</dockerHost>
+            <dockerHost>${docker.host}</dockerHost>
 
             <entryPoint>["java", "-jar", "-Dspring.profiles.active=dev","${project.build.finalName}.jar"]</entryPoint>
             <resources>

@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: dc-ums
+
+common:
+  core:
+    projectPackage: 'com.zumin.dc.ums'
+  web:
+    api:
+      title: '用户中心'
+      description: '用户登录、注册、个人信息接口'
+
+profile:
+  avatar:
+    dir: 'avatar'
+    max-size: 5

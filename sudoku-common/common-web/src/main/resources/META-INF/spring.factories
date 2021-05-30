@@ -1,9 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.zumin.sudoku.common.web.config.CommonWebConfig,\
-  com.zumin.sudoku.common.web.config.CommonWebProperties,\
-  com.zumin.sudoku.common.web.config.SwaggerConfiguration,\
-  com.zumin.sudoku.common.web.handler.WebBlockExceptionHandler,\
-  com.zumin.sudoku.common.web.handler.GlobalDataBindingHandler,\
-  com.zumin.sudoku.common.web.handler.GlobalExceptionHandler,\
-  com.zumin.sudoku.common.web.handler.GlobalResponseBodyHandler,\
-  com.zumin.sudoku.common.web.log.LogAspect

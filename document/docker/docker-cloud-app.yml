@@ -1,0 +1,87 @@
+version: '3'
+services:
+  dc-auth:
+    image: dc/auth-boot:1.0.0
+    container_name: dc-auth
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+    ports:
+      - 8000:8000
+    external_links:
+      - dc-mysql:db
+      - dc-nacos:nacos
+      - dc-redis:redis
+      - dc-sentinel:sentinel
+      - dc-zipkin:zipkin
+  dc-gateway:
+    image: dc/dc-gateway:1.0.0
+    container_name: dc-gateway
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+    ports:
+      - 9999:9999
+    external_links:
+      - dc-mysql:db
+      - dc-nacos:nacos
+      - dc-redis:redis
+      - dc-sentinel:sentinel
+      - dc-zipkin:zipkin
+      - dc-auth:auth
+#  dc-monitor:
+#    image: dc/dc-monitor:1.0.0
+#    container_name: dc-monitor
+#    environment:
+#      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+#    ports:
+#      - 7000:7000
+#    external_links:
+#      - dc-nacos:nacos
+  dc-ums:
+    image: dc/ums-boot:1.0.0
+    container_name: dc-ums
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+    ports:
+      - 8100:8100
+    external_links:
+      - dc-mysql:db
+      - dc-nacos:nacos
+      - dc-redis:redis
+      - dc-sentinel:sentinel
+      - dc-zipkin:zipkin
+  dc-dockeradmin:
+    image: dc/dockeradmin-boot:1.0.0
+    container_name: dc-dockeradmin
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+    ports:
+      - 8200:8200
+    volumes:
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    external_links:
+      - dc-mysql:db
+      - dc-nacos:nacos
+      - dc-redis:redis
+      - dc-sentinel:sentinel
+      - dc-zipkin:zipkin
+  dc-dockerserve:
+    image: dc/dockerserve-boot:1.0.0
+    container_name: dc-dockerserve
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
+    ports:
+      - 8300:8300
+    volumes:
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    external_links:
+      - dc-mysql:db
+      - dc-nacos:nacos
+      - dc-redis:redis
+      - dc-sentinel:sentinel
+      - dc-zipkin:zipkin

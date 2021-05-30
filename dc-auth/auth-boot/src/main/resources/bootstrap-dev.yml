@@ -1,0 +1,19 @@
+server:
+  port: 8000
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        namespace: 362be737-80dc-48a0-b4e6-bdb6048d9e82
+        shared-configs:
+          - data-id: redis.yaml
+          - data-id: datasource.yaml
+          - data-id: openfeign.yaml
+          - data-id: endpoints.yaml
+          - data-id: sleuth.yaml
+          - data-id: sentinel.yaml

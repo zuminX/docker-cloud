@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.zumin.dc.common.alicloud.config.OSSConfig,\
+  com.zumin.dc.common.alicloud.service.OSSService

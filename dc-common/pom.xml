@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>dc-common</artifactId>
+  <version>1.0.0</version>
+  <name>dc-common</name>
+  <description>公共模块</description>
+
+  <packaging>pom</packaging>
+
+  <parent>
+    <artifactId>docker-cloud</artifactId>
+    <groupId>com.zumin.dc</groupId>
+    <version>1.0.0</version>
+  </parent>
+
+  <modules>
+    <module>common-core</module>
+    <module>common-mybatis</module>
+    <module>common-redis</module>
+    <module>common-web</module>
+    <module>common-alicloud</module>
+  </modules>
+
+  <properties>
+    <swagger-annotations.version>1.6.2</swagger-annotations.version>
+    <hibernate.validator.version>6.1.5.Final</hibernate.validator.version>
+    <mybatis.plus.starter.version>3.4.0</mybatis.plus.starter.version>
+    <pagehelper.starter.version>1.3.0</pagehelper.starter.version>
+    <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
+    <jetbrains.annotations.version>19.0.0</jetbrains.annotations.version>
+    <jaxb-api.version>2.3.0</jaxb-api.version>
+    <jaxb-impl.version>2.3.0</jaxb-impl.version>
+    <jaxb-core.version>2.3.0</jaxb-core.version>
+    <activation.version>1.1.1</activation.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${swagger-annotations.version}</version>
+      </dependency>
+
+      <!-- hibernate 校验器 -->
+      <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate.validator.version}</version>
+      </dependency>
+
+      <!-- mybatis-plus 插件 -->
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>${mybatis.plus.starter.version}</version>
+      </dependency>
+
+      <!-- pagehelper 分页插件 -->
+      <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper-spring-boot-starter</artifactId>
+        <version>${pagehelper.starter.version}</version>
+      </dependency>
+
+      <!-- 阿里云 OOS SDK -->
+      <dependency>
+        <groupId>com.aliyun.oss</groupId>
+        <artifactId>aliyun-sdk-oss</artifactId>
+        <version>${aliyun.sdk.oss.version}</version>
+      </dependency>
+
+      <!-- jetbrains 注解 -->
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${jetbrains.annotations.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
+      <!-- 解决部署到Linux中出现NoClassDefFoundError: javax/xml/bind/DatatypeConverter的异常 -->
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${jaxb-impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>${jaxb-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>${activation.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

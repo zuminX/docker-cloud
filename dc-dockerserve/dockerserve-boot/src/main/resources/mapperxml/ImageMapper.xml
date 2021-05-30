@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zumin.dc.dockerserve.mapper.ImageMapper">
+  <resultMap id="BaseResultMap" type="com.zumin.dc.dockerserve.pojo.entity.ImageEntity">
+    <!--@mbg.generated-->
+    <!--@Table image-->
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="indicate" jdbcType="VARCHAR" property="indicate"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="user_id" jdbcType="BIGINT" property="userId"/>
+    <result column="share" jdbcType="TINYINT" property="share"/>
+    <result column="create_time" property="createTime"/>
+    <result column="description" property="description"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, indicate, `name`, version, user_id, `share`, `create_time`, `description`
+  </sql>
+
+  <select id="selectByShareOrUserIdAndNameLike" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from image
+    where (`share` = true or user_id = #{userId,jdbcType=BIGINT})
+      and `name` like concat('%', #{likeName,jdbcType=VARCHAR}, '%')
+  </select>
+</mapper>

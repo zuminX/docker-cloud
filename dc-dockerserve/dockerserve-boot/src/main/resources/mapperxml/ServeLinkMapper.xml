@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zumin.dc.dockerserve.mapper.ServeLinkMapper">
+  <resultMap id="BaseResultMap" type="com.zumin.dc.dockerserve.pojo.entity.ServeLinkEntity">
+    <!--@mbg.generated-->
+    <!--@Table serve_link-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="serve_indicate" jdbcType="VARCHAR" property="serveIndicate" />
+    <result column="be_serve_indicate" jdbcType="VARCHAR" property="beServeIndicate" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, serve_indicate, be_serve_indicate, `alias`
+  </sql>
+</mapper>

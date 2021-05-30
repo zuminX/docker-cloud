@@ -1,0 +1,16 @@
+server:
+  port: 8200
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        namespace: 93576afb-941f-4016-8825-7079c5ab2e57
+        shared-configs:
+          - data-id: redis.yaml
+          - data-id: datasource.yaml
+          - data-id: openfeign.yaml
