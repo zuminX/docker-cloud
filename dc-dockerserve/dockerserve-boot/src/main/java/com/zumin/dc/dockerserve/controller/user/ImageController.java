@@ -17,7 +17,12 @@ import com.zumin.dc.dockerserve.pojo.body.BuildImageBody;
 import com.zumin.dc.dockerserve.pojo.body.ModifyImageBody;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import com.zumin.dc.dockerserve.pojo.vo.ImageNameVO;
+import com.zumin.dc.dockerserve.pojo.vo.ImageVO;
 import com.zumin.dc.dockerserve.service.ImageService;
+import com.zumin.dc.dockerserve.utils.DockerServeUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,34 +38,49 @@ public class ImageController extends BaseController {
   private final ImageConvert imageConvert;
 
   @PostMapping("/build")
+  @ApiOperation("构建镜像")
+  @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = BuildImageBody.class, required = true)
   public void buildImage(BuildImageBody body) {
     imageService.build(body, DockerFileProcessor.DEFAULT);
   }
 
   @PostMapping("/buildJar")
+  @ApiOperation("构建Jar镜像")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = BuildImageBody.class, required = true),
+      @ApiImplicitParam(name = "javaVersion", value = "Java版本", dataTypeClass = String.class, required = true)
+  })
   public void buildJarImage(BuildImageBody body, @RequestParam(name = "javaVersion", required = false) String javaVersion) {
     imageService.build(body, new DockerFileJarProcessor(javaVersion));
   }
 
   @GetMapping("/search")
+  @ApiOperation("根据名称搜索共享的应用")
+  @ApiImplicitParam(name = "name", value = "应用名称", dataTypeClass = String.class, required = true)
   public List<ImageNameVO> searchByName(@RequestParam(value = "name") String name) {
-    return ConvertUtils.convert(imageService.listShareOrUserIdByName(SecurityUtils.getUserId(), name), imageConvert::convert);
+    return ConvertUtils.convert(imageService.listShareOrUserIdByName(SecurityUtils.getUserId(), name), imageConvert::convertToNameVO);
   }
 
   @GetMapping("/list")
-  public Page<ImageEntity> listByCurrentUser(@RequestParam(value = "name", required = false) String name) {
-    return getPage(() -> imageService.listByUserIdAndName(SecurityUtils.getUserId(), name));
+  @ApiOperation("根据名称查询当前用户的应用")
+  @ApiImplicitParam(name = "name", value = "应用名称", dataTypeClass = String.class, required = true)
+  public Page<ImageVO> listByCurrentUser(@RequestParam(value = "name", required = false) String name) {
+    return getPage(() -> imageService.listByUserIdAndName(SecurityUtils.getUserId(), name), imageConvert::convertToVO);
   }
 
   @GetMapping("/listShare")
-  public Page<ImageEntity> listShare(@RequestParam(value = "name", required = false) String name) {
-    return getPage(() -> imageService.listByShareAndName(true, name));
+  @ApiOperation("根据名称查询共享的应用")
+  @ApiImplicitParam(name = "name", value = "应用名称", dataTypeClass = String.class, required = true)
+  public Page<ImageVO> listShare(@RequestParam(value = "name", required = false) String name) {
+    return getPage(() -> imageService.listByShareAndName(true, name), imageConvert::convertToVO);
   }
 
   @PostMapping("/modify")
+  @ApiOperation("修改应用信息")
+  @ApiImplicitParam(name = "body", value = "修改的应用信息", dataTypeClass = ModifyImageBody.class, required = true)
   public void modify(@RequestBody ModifyImageBody body) {
     ImageEntity entity = imageService.getById(body.getId());
-    if (entity == null || !imageService.checkImageAccess(entity)) {
+    if (entity == null || !DockerServeUtils.checkAccess(entity)) {
       throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);
     }
     imageService.updateById(PublicUtils.selectiveAssign(body, entity));

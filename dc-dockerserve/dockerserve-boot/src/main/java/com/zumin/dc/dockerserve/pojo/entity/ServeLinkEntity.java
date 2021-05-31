@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 服务链接表对象的实体类
+ */
 @Data
 @Builder
 @AllArgsConstructor

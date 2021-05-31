@@ -1,11 +1,10 @@
 package com.zumin.dc.dockerserve.exception;
 
-import com.zumin.dc.common.core.enums.StatusCode;
 import com.zumin.dc.common.core.exception.BaseException;
 import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
 
 /**
- * Docker镜像异常类
+ * 镜像异常类
  */
 public class ImageException extends BaseException {
 

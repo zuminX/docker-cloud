@@ -3,6 +3,9 @@ package com.zumin.dc.dockerserve.pojo.body;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 构建镜像的信息
+ */
 @Data
 public class BuildImageBody {
 

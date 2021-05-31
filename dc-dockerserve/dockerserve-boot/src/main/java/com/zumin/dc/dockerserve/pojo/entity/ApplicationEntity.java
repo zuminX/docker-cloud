@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 应用表对象的实体类
+ */
 @Data
 @Builder
 @AllArgsConstructor

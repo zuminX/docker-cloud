@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DockerCompose的映射类
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

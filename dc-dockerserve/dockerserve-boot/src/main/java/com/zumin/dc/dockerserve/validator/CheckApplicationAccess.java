@@ -12,7 +12,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * 验证应用程序类的可访问性注解
+ * 验证应用类的可访问性注解
  */
 @Target({PARAMETER, FIELD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,7 +20,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = CheckApplicationAccessValidator.class)
 public @interface CheckApplicationAccess {
 
-  String message() default "没有权限访问该应用程序";
+  String message() default "没有权限访问该应用";
 
   Class<?>[] groups() default {};
 

@@ -21,11 +21,11 @@ public enum DockerServeStatusCode implements StatusCode {
 
   APPLICATION_ERROR(30, "服务器在处理应用程序时发生了错误"),
   APPLICATION_UNAUTHORIZED_ACCESS(31, "没有权限访问该应用程序"),
-  APPLICATION_PORT_ILLEGAL(32, "请求创建非法的端口"),
-  APPLICATION_NOT_START(33, "该服务还未启动"),
+  APPLICATION_NOT_START(32, "该服务还未启动"),
 
   SERVE_ERROR(40, "服务器在处理服务时发生了错误"),
   SERVE_UNAUTHORIZED_ACCESS(41, "没有权限访问该服务"),
+  APPLICATION_PORT_ILLEGAL(42, "请求创建非法的端口"),
 
   SERVE_LINK_ERROR(50, "服务器在处理服务链接时发生了错误"),
   SERVE_LINK_ALIAS_ILLEGAL(51, "服务别名不合法");

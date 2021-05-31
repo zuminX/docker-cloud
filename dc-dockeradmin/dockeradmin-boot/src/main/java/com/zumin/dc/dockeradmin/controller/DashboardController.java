@@ -8,6 +8,7 @@ import com.zumin.dc.dockeradmin.service.InfoService;
 import com.zumin.dc.dockeradmin.service.NetworkService;
 import com.zumin.dc.dockeradmin.service.VersionService;
 import com.zumin.dc.dockeradmin.service.VolumeService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -23,6 +24,7 @@ public class DashboardController {
   private final VersionService versionService;
 
   @GetMapping("/stats")
+  @ApiOperation("获取Docker统计信息")
   public DashBoardStatsVO stats() {
     return DashBoardStatsVO.builder()
         .containerStats(containerService.getStatistics())

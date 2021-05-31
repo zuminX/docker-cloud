@@ -5,8 +5,9 @@ import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.dockeradmin.convert.ConfigConvert;
 import com.zumin.dc.dockeradmin.pojo.vo.ConfigVO;
 import com.zumin.dc.dockeradmin.service.ConfigService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +21,14 @@ public class ConfigController {
   private final ConfigConvert configConvert;
 
   @GetMapping("/list")
+  @ApiOperation("列出所有的配置信息")
   public List<ConfigVO> listOfAllConfig() {
     return ConvertUtils.convert(configService.listOfAllConfig(), configConvert::convert);
   }
 
   @DeleteMapping("/{configId}")
+  @ApiOperation("删除配置")
+  @ApiImplicitParam(name = "configId", value = "配置ID", dataTypeClass = String.class, required = true)
   public void deleteConfig(@PathVariable String configId) {
     configService.deleteConfig(configId);
   }

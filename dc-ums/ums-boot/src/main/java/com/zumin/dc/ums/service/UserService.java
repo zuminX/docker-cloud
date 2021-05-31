@@ -11,8 +11,8 @@ import com.zumin.dc.common.core.auth.AuthGrantType;
 import com.zumin.dc.common.core.auth.AuthParamName;
 import com.zumin.dc.common.core.constant.PermissionConstants;
 import com.zumin.dc.common.core.result.CommonResult;
+import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.mybatis.page.Page;
-import com.zumin.dc.common.mybatis.page.PageParam;
 import com.zumin.dc.common.mybatis.utils.PageUtils;
 import com.zumin.dc.common.web.log.BusinessType;
 import com.zumin.dc.common.web.log.Log;
@@ -121,6 +121,26 @@ public class UserService extends ServiceImpl<UserMapper, UserEntity> {
    */
   public Page<UserDetailVO> searchUserByName(String name) {
     return PageUtils.getPage(() -> baseMapper.selectByNameWithRole(name), userConvert::entityToDetailVO);
+  }
+
+  /**
+   * 根据用户ID批量查询对应的昵称
+   *
+   * @param userIdList 用户ID列表
+   * @return 用户对应的昵称列表
+   */
+  public List<String> listNicknameById(List<Long> userIdList) {
+    return ConvertUtils.convert(baseMapper.selectBatchIds(userIdList), UserEntity::getNickname);
+  }
+
+  /**
+   * 根据用户ID查询对应的昵称
+   *
+   * @param userId 用户ID
+   * @return 用户对应的昵称
+   */
+  public String getNicknameById(Long userId) {
+    return baseMapper.selectById(userId).getNickname();
   }
 
   /**
@@ -279,7 +299,7 @@ public class UserService extends ServiceImpl<UserMapper, UserEntity> {
    * 更新头像地址
    *
    * @param avatarPath 头像地址
-   * @param userId 用户ID
+   * @param userId     用户ID
    */
   public void updateAvatar(String avatarPath, Long userId) {
     update(Wrappers.lambdaUpdate(UserEntity.class).set(UserEntity::getAvatar, avatarPath).eq(UserEntity::getId, userId));

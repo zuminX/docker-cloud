@@ -5,6 +5,9 @@ import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * 应用对象转换器
+ */
 @Mapper
 public interface ApplicationConvert {
 

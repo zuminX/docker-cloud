@@ -1,18 +1,24 @@
 package com.zumin.dc.dockerserve.command;
 
-import cn.hutool.core.util.RuntimeUtil;
 import com.zumin.dc.common.core.pojo.CommandString;
 import com.zumin.dc.common.core.pojo.CommandString.CommandStringBuilder;
+import com.zumin.dc.common.core.utils.CommandUtils;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * DockerCompose命令
+ */
 @Slf4j
 @AllArgsConstructor
-public class DockerComposeCommand {
+public class ComposeCommand {
 
+  /**
+   * Compose文件路径
+   */
   @Getter
   private final String path;
 
@@ -49,13 +55,16 @@ public class DockerComposeCommand {
     return exec("ps", "--services");
   }
 
+  /**
+   * 执行命令
+   *
+   * @param options 选项
+   * @return 执行结果列表
+   */
   private List<String> exec(String... options) {
     CommandStringBuilder builder = CommandString.builder("docker-compose").option("-f", path);
     Arrays.stream(options).forEach(builder::option);
-    String command = builder.build().getCommand();
-    List<String> result = RuntimeUtil.execForLines(command);
-    log.debug(String.valueOf(result));
-    return result;
+    return CommandUtils.execute(builder.build());
   }
 
 }

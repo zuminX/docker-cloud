@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 镜像表对象的实体类
+ */
 @Data
 @Builder
 @AllArgsConstructor

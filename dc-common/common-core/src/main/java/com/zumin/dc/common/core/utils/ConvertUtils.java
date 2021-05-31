@@ -21,4 +21,8 @@ public class ConvertUtils {
   public <T, V, R> R convert(Collection<T> list, Function<T, V> convert, Collector<V, ?, R> collector) {
     return list.stream().map(convert).collect(collector);
   }
+
+  public <T, R> R convert(Collection<T> list, Collector<T, ?, R> collector) {
+    return list.stream().collect(collector);
+  }
 }

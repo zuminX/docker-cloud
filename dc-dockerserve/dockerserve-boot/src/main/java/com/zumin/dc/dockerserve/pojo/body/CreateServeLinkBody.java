@@ -2,8 +2,11 @@ package com.zumin.dc.dockerserve.pojo.body;
 
 import lombok.Data;
 
+/**
+ * 创建服务链接的信息
+ */
 @Data
-public class CreateApplicationServeLinkBody {
+public class CreateServeLinkBody {
 
   /**
    * 被链接服务的ID

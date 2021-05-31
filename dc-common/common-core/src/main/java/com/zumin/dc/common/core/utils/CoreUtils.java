@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CoreUtils {
 
-  public static String projectPackageName;
+  private static String PROJECT_PACKAGE_NAME;
 
   private final Environment env;
 
@@ -24,11 +24,14 @@ public class CoreUtils {
    * @return Class集合
    */
   public Set<Class<?>> getClasses() {
-    return ClassUtil.scanPackage(projectPackageName);
+    return ClassUtil.scanPackage(PROJECT_PACKAGE_NAME);
   }
 
+  /**
+   * 读取配置
+   */
   @PostConstruct
   public void readConfig() {
-    projectPackageName = env.getProperty("common.core.projectPackage", "com.zumin.dc");
+    PROJECT_PACKAGE_NAME = env.getProperty("common.core.projectPackage", "com.zumin.dc");
   }
 }

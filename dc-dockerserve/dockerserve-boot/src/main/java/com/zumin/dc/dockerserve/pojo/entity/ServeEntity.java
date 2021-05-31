@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 服务表对象的实体类
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -35,7 +38,7 @@ public class ServeEntity {
    * 是否共享
    */
   @TableField(value = "`share`")
-  private Integer share;
+  private Boolean share;
 
   /**
    * 服务标识

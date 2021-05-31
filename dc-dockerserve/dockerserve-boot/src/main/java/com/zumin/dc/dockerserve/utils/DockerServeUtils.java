@@ -4,6 +4,9 @@ import com.alibaba.spring.util.FieldUtils;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import lombok.experimental.UtilityClass;
 
+/**
+ * DockerServe模块的工具类
+ */
 @UtilityClass
 public class DockerServeUtils {
 
@@ -17,12 +20,12 @@ public class DockerServeUtils {
     if (object == null) {
       return false;
     }
-    //TODO 管理员无须受此限制
-    Object userId = FieldUtils.getFieldValue(object, "userId");
-    if (userId instanceof Long && SecurityUtils.getUserId().equals(userId)) {
+    Object share = FieldUtils.getFieldValue(object, "share");
+    if (share instanceof Boolean && (Boolean) share) {
       return true;
     }
-    Object share = FieldUtils.getFieldValue(object, "share");
-    return share instanceof Boolean ? (Boolean) share : Boolean.valueOf(false);
+    //TODO 管理员无须受此限制
+    Object userId = FieldUtils.getFieldValue(object, "userId");
+    return userId instanceof Long && SecurityUtils.getUserId().equals(userId);
   }
 }

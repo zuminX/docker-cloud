@@ -7,7 +7,7 @@ import com.zumin.dc.dockerserve.service.ServeService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@ComRestController(path = "/admin/serve", tags = "应用服务API接口")
+@ComRestController(path = "/admin/serve", tags = "管理服务API接口")
 public class ServeAdminController extends BaseController {
 
   private final ServeService serveService;

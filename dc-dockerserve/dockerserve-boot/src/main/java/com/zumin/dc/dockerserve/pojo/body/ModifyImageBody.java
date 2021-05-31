@@ -2,6 +2,9 @@ package com.zumin.dc.dockerserve.pojo.body;
 
 import lombok.Data;
 
+/**
+ * 修改镜像的信息
+ */
 @Data
 public class ModifyImageBody {
 

@@ -3,6 +3,9 @@ package com.zumin.dc.dockerserve.pojo.body;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * 创建应用的信息
+ */
 @Data
 public class CreateApplicationBody {
 
@@ -24,5 +27,5 @@ public class CreateApplicationBody {
   /**
    * 服务列表
    */
-  private List<CreateApplicationServeBody> serveList;
+  private List<CreateServeBody> serveList;
 }

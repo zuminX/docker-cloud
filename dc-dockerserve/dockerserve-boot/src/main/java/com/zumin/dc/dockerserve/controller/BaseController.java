@@ -1,6 +1,5 @@
 package com.zumin.dc.dockerserve.controller;
 
-import com.github.dockerjava.api.model.Image;
 import com.zumin.dc.common.web.domain.CustomEditorInfo;
 import com.zumin.dc.common.web.handler.DataBindingHandler;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
@@ -22,7 +21,6 @@ public class BaseController implements DataBindingHandler {
 
   @Autowired
   private ImageService imageService;
-
   @Autowired
   private ApplicationService applicationService;
 
@@ -59,9 +57,9 @@ public class BaseController implements DataBindingHandler {
   }
 
   /**
-   * 获取镜像实体类的自定义编辑信息对象
+   * 获取应用实体类的自定义编辑信息对象
    *
-   * @return 镜像实体类的自定义编辑信息对象
+   * @return 应用实体类的自定义编辑信息对象
    */
   private CustomEditorInfo<ApplicationEntity> getApplicationEditor() {
     return new CustomEditorInfo<>(ApplicationEntity.class, applicationService::getById);

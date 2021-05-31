@@ -1,11 +1,13 @@
 package com.zumin.dc.common.core.pojo;
 
-import cn.hutool.core.io.FileUtil;
 import com.zumin.dc.common.core.utils.file.FileUtils;
 import java.io.InputStream;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * 文件保存信息
+ */
 @Getter
 public class FileSaveInfo {
 

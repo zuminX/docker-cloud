@@ -2,6 +2,9 @@ package com.zumin.dc.dockerserve.pojo.body;
 
 import lombok.Data;
 
+/**
+ * 修改应用的信息
+ */
 @Data
 public class ModifyApplicationBody {
 
