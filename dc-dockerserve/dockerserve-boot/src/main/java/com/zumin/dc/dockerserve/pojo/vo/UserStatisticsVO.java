@@ -1,6 +1,5 @@
 package com.zumin.dc.dockerserve.pojo.vo;
 
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationServeInfo {
+public class UserStatisticsVO {
 
-  private Long id;
-  private String name;
-  private String state;
-  private String description;
-  private Long userId;
-  private Set<Integer> portList;
+  private int applicationTotal;
+  private int imageTotal;
+  private int serveTotal;
 }

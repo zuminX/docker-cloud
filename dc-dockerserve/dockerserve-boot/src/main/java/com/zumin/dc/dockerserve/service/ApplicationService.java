@@ -15,6 +15,7 @@ import com.zumin.dc.dockerserve.pojo.bo.ComposeBO.ComposeBOBuilder;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeBO.ComposeServiceBO;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeServeInfo;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
+import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import java.io.File;
 import java.util.List;
@@ -111,6 +112,16 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
    */
   public List<ApplicationEntity> listByName(String name) {
     return list(Wrappers.lambdaQuery(ApplicationEntity.class).like(StrUtil.isNotBlank(name), ApplicationEntity::getName, name));
+  }
+
+  /**
+   * 获取用户应用总数
+   *
+   * @param userId 用户ID
+   * @return 应用总数
+   */
+  public int countByUserId(Long userId) {
+    return count(Wrappers.lambdaQuery(ApplicationEntity.class).eq(ApplicationEntity::getUserId, userId));
   }
 
   /**

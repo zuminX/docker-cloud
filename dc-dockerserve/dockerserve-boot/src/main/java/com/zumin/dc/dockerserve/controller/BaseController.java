@@ -4,8 +4,10 @@ import com.zumin.dc.common.web.domain.CustomEditorInfo;
 import com.zumin.dc.common.web.handler.DataBindingHandler;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
+import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.service.ApplicationService;
 import com.zumin.dc.dockerserve.service.ImageService;
+import com.zumin.dc.dockerserve.service.ServeService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class BaseController implements DataBindingHandler {
   private ImageService imageService;
   @Autowired
   private ApplicationService applicationService;
+  @Autowired
+  private ServeService serveService;
 
   /**
    * 初始化绑定信息
@@ -44,6 +48,7 @@ public class BaseController implements DataBindingHandler {
     List<CustomEditorInfo<?>> customEditorInfoList = new ArrayList<>();
     customEditorInfoList.add(getImageEntityEditor());
     customEditorInfoList.add(getApplicationEditor());
+    customEditorInfoList.add(getServeEditor());
     return customEditorInfoList;
   }
 
@@ -63,6 +68,15 @@ public class BaseController implements DataBindingHandler {
    */
   private CustomEditorInfo<ApplicationEntity> getApplicationEditor() {
     return new CustomEditorInfo<>(ApplicationEntity.class, applicationService::getById);
+  }
+
+  /**
+   * 获取服务实体类的自定义编辑信息对象
+   *
+   * @return 服务实体类的自定义编辑信息对象
+   */
+  private CustomEditorInfo<ServeEntity> getServeEditor() {
+    return new CustomEditorInfo<>(ServeEntity.class, serveService::getById);
   }
 
 }

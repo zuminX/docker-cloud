@@ -89,6 +89,27 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
   }
 
   /**
+   * 检查创建服务所使用的镜像的可访问性
+   *
+   * @param serveList 服务列表
+   * @return 若可访问则返回true，否则返回false
+   */
+  public boolean checkImageAccess(List<CreateServeBody> serveList) {
+    List<Integer> imageIdList = ConvertUtils.convert(serveList, CreateServeBody::getImageId);
+    return imageIdList.stream().allMatch(imageId -> DockerServeUtils.checkAccess(getById(imageId)));
+  }
+
+  /**
+   * 获取用户镜像总数
+   *
+   * @param userId 用户ID
+   * @return 镜像总数
+   */
+  public int countByUserId(Long userId) {
+    return count(Wrappers.lambdaQuery(ImageEntity.class).eq(ImageEntity::getUserId, userId));
+  }
+
+  /**
    * 构建镜像
    *
    * @param info      文件保存信息
@@ -124,14 +145,4 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
         .build();
   }
 
-  /**
-   * 检查创建服务所使用的镜像的可访问性
-   *
-   * @param serveList 服务列表
-   * @return 若可访问则返回true，否则返回false
-   */
-  public boolean checkImageAccess(List<CreateServeBody> serveList) {
-    List<Integer> imageIdList = ConvertUtils.convert(serveList, CreateServeBody::getImageId);
-    return imageIdList.stream().allMatch(imageId -> DockerServeUtils.checkAccess(getById(imageId)));
-  }
 }

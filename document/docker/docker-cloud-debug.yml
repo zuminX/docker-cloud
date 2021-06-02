@@ -4,7 +4,7 @@ services:
     image: dc/auth-boot:1.0.0
     container_name: dc-auth
     environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5001
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5001
     ports:
       - 8000:8000
       - 5001:5001
@@ -18,7 +18,7 @@ services:
     image: dc/dc-gateway:1.0.0
     container_name: dc-gateway
     environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5002
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5002
     ports:
       - 9999:9999
       - 5002:5002
@@ -33,7 +33,7 @@ services:
 #    image: dc/dc-monitor:1.0.0
 #    container_name: dc-monitor
 #    environment:
-#      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5003
+#      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5003
 #    ports:
 #      - 7000:7000
 #      - 5003:5003
@@ -43,7 +43,7 @@ services:
     image: dc/ums-boot:1.0.0
     container_name: dc-ums
     environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5004
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5004
     ports:
       - 8100:8100
       - 5004:5004
@@ -57,7 +57,7 @@ services:
     image: dc/dockeradmin-boot:1.0.0
     container_name: dc-dockeradmin
     environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     ports:
       - 8200:8200
       - 5005:5005
@@ -76,7 +76,7 @@ services:
     image: dc/dockerserve-boot:1.0.0
     container_name: dc-dockerserve
     environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     ports:
       - 8300:8300
       - 5006:5006

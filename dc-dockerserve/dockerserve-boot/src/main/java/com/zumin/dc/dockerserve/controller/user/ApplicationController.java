@@ -50,7 +50,7 @@ public class ApplicationController extends BaseController {
   public void create(@RequestBody CreateApplicationBody body) {
     List<CreateServeBody> serveList = body.getServeList();
     if (!serveService.checkPort(serveList)) {
-      throw new ServeException(DockerServeStatusCode.APPLICATION_PORT_ILLEGAL);
+      throw new ServeException(DockerServeStatusCode.SERVE_CREATE_PORT_ILLEGAL);
     }
     if (!imageService.checkImageAccess(serveList)) {
       throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);

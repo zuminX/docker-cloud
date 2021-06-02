@@ -6,14 +6,13 @@ import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.controller.BaseController;
-import com.zumin.dc.dockerserve.convert.PortConvert;
 import com.zumin.dc.dockerserve.convert.ServeConvert;
+import com.zumin.dc.dockerserve.enums.ContainerState;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeServeInfo;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.pojo.vo.ApplicationServeInfo;
 import com.zumin.dc.dockerserve.pojo.vo.ApplicationServeInfo.ApplicationServeInfoBuilder;
-import com.zumin.dc.dockerserve.pojo.vo.PortVO;
 import com.zumin.dc.dockerserve.pojo.vo.ServeNameVO;
 import com.zumin.dc.dockerserve.service.ApplicationService;
 import com.zumin.dc.dockerserve.service.ContainerService;
@@ -37,29 +36,27 @@ public class ServeController extends BaseController {
   private final ContainerService containerService;
   private final ServeService serveService;
   private final ServeConvert serveConvert;
-  private final PortConvert portConvert;
 
-  @GetMapping("/info")
+  @GetMapping("/infoByApplication")
   @ApiOperation("获取应用的服务信息")
   @ApiImplicitParam(name = "application", value = "应用ID", dataTypeClass = Long.class, required = true)
-  public List<ApplicationServeInfo> info(@RequestParam("application") ApplicationEntity application) {
+  public List<ApplicationServeInfo> infoByApplication(@RequestParam("application") ApplicationEntity application) {
     Map<String, String> serveToContainer = ConvertUtils.convert(applicationService.getComposeServeList(application),
         Collectors.toMap(ComposeServeInfo::getServeIndicate, ComposeServeInfo::getContainerId));
     List<ServeEntity> serveEntityList = serveService.listByApplicationId(application.getId());
     List<ApplicationServeInfo> result = new ArrayList<>();
     serveEntityList.forEach(serveEntity -> {
       String containerId = serveToContainer.get(serveEntity.getServeIndicate());
-      Container container = containerService.getById(containerId);
-      ApplicationServeInfoBuilder builder = ApplicationServeInfo.builder()
+      Container container = containerService.getByName(containerId);
+      ApplicationServeInfo info = ApplicationServeInfo.builder()
+          .id(serveEntity.getId())
           .name(serveEntity.getName())
           .description(serveEntity.getDescription())
-          .userId(serveEntity.getUserId());
-      if (container == null) {
-        builder.state("exited").portList(Arrays.stream(StrUtil.split(serveEntity.getPort(), ";")).map(PortVO::new).collect(Collectors.toSet()));
-      } else {
-        builder.state(container.getState()).portList(portConvert.convert(container.getPorts()));
-      }
-      result.add(builder.build());
+          .userId(serveEntity.getUserId())
+          .portList(Arrays.stream(StrUtil.split(serveEntity.getPort(), ";")).map(Integer::parseInt).collect(Collectors.toSet()))
+          .state(container == null ? ContainerState.EXITED.getName() : container.getState())
+          .build();
+      result.add(info);
     });
     return result;
   }

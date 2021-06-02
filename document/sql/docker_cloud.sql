@@ -137,7 +137,7 @@ CREATE TABLE `image`
   ROW_FORMAT = Dynamic;
 
 INSERT INTO `image`
-VALUES (1, 'test-image', '1.0.0', '测试镜像', '1fa973d34ead', 1, 1, NOW());
+VALUES (1, 'test-image', '1.0.0', '测试镜像', '735af156ac7b', 1, 1, NOW());
 
 DROP TABLE IF EXISTS `application`;
 CREATE TABLE `application`
@@ -180,7 +180,7 @@ CREATE TABLE `serve`
   ROW_FORMAT = Dynamic;
 
 INSERT INTO `serve`
-VALUES (1, '测试服务', '测试服务', 1, 'test-01', '1fa973d34ead', 'test-01', NULL, '8080', NULL, 1, 1);
+VALUES (1, '测试服务', '测试服务', 1, 'test-01', '735af156ac7b', 'test-01', NULL, '8080', NULL, 1, 1);
 
 DROP TABLE IF EXISTS `serve_link`;
 CREATE TABLE `serve_link`

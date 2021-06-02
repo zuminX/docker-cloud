@@ -10,6 +10,7 @@ import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
 import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
 import com.zumin.dc.dockerserve.pojo.body.CreateServeLinkBody;
+import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.utils.DockerServeUtils;
 import java.util.Collection;
@@ -75,6 +76,16 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
   }
 
   /**
+   * 获取用户服务总数
+   *
+   * @param userId 用户ID
+   * @return 服务总数
+   */
+  public int countByUserId(Long userId) {
+    return count(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getUserId, userId));
+  }
+
+  /**
    * 检查创建服务中链接到的服务的可访问性
    *
    * @param serveList 创建服务信息列表
@@ -100,10 +111,7 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
     for (List<Integer> ports : portList) {
       Set<Integer> portSet = new HashSet<>();
       for (Integer port : ports) {
-        if (port == null || port <= 0 || port > 60999) {
-          return false;
-        }
-        if (portSet.contains(port)) {
+        if (!DockerServeUtils.checkPort(port) || portSet.contains(port)) {
           return false;
         }
         portSet.add(port);

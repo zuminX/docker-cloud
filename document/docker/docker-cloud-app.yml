@@ -3,8 +3,6 @@ services:
   dc-auth:
     image: dc/auth-boot:1.0.0
     container_name: dc-auth
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
     ports:
       - 8000:8000
     external_links:
@@ -16,8 +14,6 @@ services:
   dc-gateway:
     image: dc/dc-gateway:1.0.0
     container_name: dc-gateway
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
     ports:
       - 9999:9999
     external_links:
@@ -30,8 +26,6 @@ services:
 #  dc-monitor:
 #    image: dc/dc-monitor:1.0.0
 #    container_name: dc-monitor
-#    environment:
-#      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
 #    ports:
 #      - 7000:7000
 #    external_links:
@@ -39,8 +33,6 @@ services:
   dc-ums:
     image: dc/ums-boot:1.0.0
     container_name: dc-ums
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
     ports:
       - 8100:8100
     external_links:
@@ -52,8 +44,6 @@ services:
   dc-dockeradmin:
     image: dc/dockeradmin-boot:1.0.0
     container_name: dc-dockeradmin
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
     ports:
       - 8200:8200
     volumes:
@@ -70,8 +60,6 @@ services:
   dc-dockerserve:
     image: dc/dockerserve-boot:1.0.0
     container_name: dc-dockerserve
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xmx100m -Xms100m
     ports:
       - 8300:8300
     volumes:

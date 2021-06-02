@@ -1,11 +1,12 @@
 package com.zumin.dc.common.web.handler;
 
 import com.zumin.dc.common.core.result.CommonResult;
+import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -44,6 +45,10 @@ public class GlobalResponseBodyHandler implements ResponseBodyAdvice<Object> {
   @Override
   public Object beforeBodyWrite(Object body, @NotNull MethodParameter methodParameter, @NotNull MediaType mediaType, @NotNull Class aClass,
       @NotNull ServerHttpRequest serverHttpRequest, @NotNull ServerHttpResponse serverHttpResponse) {
+    Method method = methodParameter.getMethod();
+    if (method != null && method.getReturnType().equals(ResponseEntity.class)) {
+      return body;
+    }
     return body instanceof CommonResult ? body : CommonResult.success(body);
   }
 }

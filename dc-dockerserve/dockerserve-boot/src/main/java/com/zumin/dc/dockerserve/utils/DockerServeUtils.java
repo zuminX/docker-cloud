@@ -28,4 +28,14 @@ public class DockerServeUtils {
     Object userId = FieldUtils.getFieldValue(object, "userId");
     return userId instanceof Long && SecurityUtils.getUserId().equals(userId);
   }
+
+
+  /**
+   * 检查端口是否合法
+   * @param port 端口号
+   * @return 若合法则返回true，否则返回false
+   */
+  public boolean checkPort(Integer port) {
+    return port != null && port > 0 && port <= 60999;
+  }
 }
