@@ -143,7 +143,7 @@ public class OSSService {
     callbackData.setCallbackUrl(addr + "/" + parameter.getCallbackPath());
     callbackData.setCallbackBody("filename=${object}&size=${size}&mimeType=${mimeType}&" + CALLBACK_DATA_PARAMETER_NAME + "=" + saveCallbackData(parameter));
     callbackData.setCallbackBodyType("application/x-www-form-urlencoded");
-    return BinaryUtil.toBase64String(JSONUtil.parse(callbackData).toString().getBytes());
+    return BinaryUtil.toBase64String(JSONUtil.parse(callbackData).toString().getBytes(StandardCharsets.UTF_8));
   }
 
   /**

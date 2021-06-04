@@ -8,18 +8,17 @@ import com.zumin.dc.common.core.enums.CommonStatusCode;
 import com.zumin.dc.common.core.exception.FileException;
 import com.zumin.dc.common.core.pojo.FileSaveInfo;
 import com.zumin.dc.common.core.service.FileService;
-import com.zumin.dc.common.core.utils.ConvertUtils;
+import com.zumin.dc.common.core.utils.ServletUtils;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.command.ImageCommand;
 import com.zumin.dc.dockerserve.command.parameter.BuildImageParameter;
 import com.zumin.dc.dockerserve.convert.ImageConvert;
 import com.zumin.dc.dockerserve.dockerfile.DockerFileBuilder;
+import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileJarProcessor;
 import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileProcessor;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.pojo.body.BuildImageBody;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
-import com.zumin.dc.dockerserve.utils.DockerServeUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -75,28 +74,26 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
   }
 
   /**
-   * 构建镜像，并保存信息至数据库
+   * 根据名称列出镜像
    *
-   * @param body      构建镜像的信息
-   * @param processor 构建时的处理器
+   * @param name 镜像名称
+   * @return 镜像列表
    */
-  public void build(BuildImageBody body, DockerFileProcessor processor) {
-    FileSaveInfo info = buildSaveInfo(body);
-    fileService.save(info);
-    String imageIndicate = buildImage(info, body.getVersion(), processor);
-    baseMapper.insert(imageConvert.convert(body, SecurityUtils.getUserId(), imageIndicate));
-    FileUtil.del(info.getDirectory());
+  public List<ImageEntity> listByName(String name) {
+    return list(Wrappers.lambdaQuery(ImageEntity.class).eq(StrUtil.isNotBlank(name), ImageEntity::getName, name));
   }
 
   /**
-   * 检查创建服务所使用的镜像的可访问性
+   * 构建镜像，并保存信息至数据库
    *
-   * @param serveList 服务列表
-   * @return 若可访问则返回true，否则返回false
+   * @param body 构建镜像的信息
    */
-  public boolean checkImageAccess(List<CreateServeBody> serveList) {
-    List<Integer> imageIdList = ConvertUtils.convert(serveList, CreateServeBody::getImageId);
-    return imageIdList.stream().allMatch(imageId -> DockerServeUtils.checkAccess(getById(imageId)));
+  public void build(BuildImageBody body) {
+    FileSaveInfo info = buildSaveInfo(body);
+    fileService.save(info);
+    String imageIndicate = buildImage(info, body.getVersion());
+    baseMapper.insert(imageConvert.convert(body, SecurityUtils.getUserId(), imageIndicate));
+    FileUtil.del(info.getDirectory());
   }
 
   /**
@@ -112,13 +109,12 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
   /**
    * 构建镜像
    *
-   * @param info      文件保存信息
-   * @param version   镜像的版本
-   * @param processor 构建时的处理器
+   * @param info    文件保存信息
+   * @param version 镜像的版本
    * @return Docker镜像ID
    */
-  private String buildImage(FileSaveInfo info, String version, DockerFileProcessor processor) {
-    DockerFileBuilder.build(info, processor);
+  private String buildImage(FileSaveInfo info, String version) {
+    DockerFileBuilder.build(info, selectProcessor(info.getType()));
     BuildImageParameter parameter = BuildImageParameter.builder().directory(info.getDirectory()).name(info.getName()).version(version).build();
     return ImageCommand.build(parameter);
   }
@@ -143,6 +139,13 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
         .type(body.getType())
         .allowExtensions(SUPPORTED_BUILD_TYPE)
         .build();
+  }
+
+  private DockerFileProcessor selectProcessor(String type) {
+    if (type.equals("jar")) {
+      return new DockerFileJarProcessor(ServletUtils.getParameter("javaVersion"));
+    }
+    return DockerFileProcessor.DEFAULT;
   }
 
 }

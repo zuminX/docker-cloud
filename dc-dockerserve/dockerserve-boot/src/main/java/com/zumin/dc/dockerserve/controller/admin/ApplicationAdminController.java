@@ -27,7 +27,7 @@ public class ApplicationAdminController extends BaseController {
   @ApiImplicitParam(name = "entity", value = "修改后的应用对象", dataTypeClass = ApplicationEntity.class, required = true)
   public void save(@RequestBody ApplicationEntity entity) {
     entity.setUpdateTime(LocalDateTime.now());
-    applicationService.save(entity);
+    applicationService.updateById(entity);
   }
 
   @GetMapping("/listByName")

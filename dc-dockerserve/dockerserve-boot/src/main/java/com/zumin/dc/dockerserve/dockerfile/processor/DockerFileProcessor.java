@@ -15,7 +15,7 @@ public interface DockerFileProcessor {
   /**
    * 处理DockerFile内容
    *
-   * @param info              构建对象的文件信息
+   * @param info    构建对象的文件信息
    * @param content DockerFile文件内容
    * @return 处理后的DockerFile内容
    */

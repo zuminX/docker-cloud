@@ -44,9 +44,9 @@ public class ReverseProxyController {
       throw new ServeException(DockerServeStatusCode.SERVE_PATH_ILLEGAL);
     }
     ServeEntity entity = serveService.getById(requestServe.getServeId());
-    checkServeAccess(entity);
+    assertServe(entity);
     Map<Integer, Integer> portMap = containerService.getPortMap(getContainer(entity));
-    checkPortAccess(requestServe, portMap);
+    assertPort(requestServe, portMap);
     return reverseProxyService.proxy("http://" + ip + ":" + portMap.get(requestServe.getPort()), PREFIX + requestServe.toPath());
   }
 
@@ -55,7 +55,7 @@ public class ReverseProxyController {
    *
    * @param entity 服务
    */
-  private void checkServeAccess(ServeEntity entity) {
+  private void assertServe(ServeEntity entity) {
     if (!DockerServeUtils.checkAccess(entity)) {
       throw new ServeException(DockerServeStatusCode.SERVE_UNAUTHORIZED_ACCESS);
     }
@@ -67,7 +67,7 @@ public class ReverseProxyController {
    * @param requestServe 请求服务
    * @param portMap      内部端口->访问端口的映射
    */
-  private void checkPortAccess(RequestServeBody requestServe, Map<Integer, Integer> portMap) {
+  private void assertPort(RequestServeBody requestServe, Map<Integer, Integer> portMap) {
     if (portMap.get(requestServe.getPort()) == null) {
       throw new ServeException(DockerServeStatusCode.SERVE_ACCESS_PORT_ILLEGAL);
     }

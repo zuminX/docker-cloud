@@ -9,8 +9,6 @@ import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.controller.BaseController;
 import com.zumin.dc.dockerserve.convert.ImageConvert;
-import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileJarProcessor;
-import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileProcessor;
 import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
 import com.zumin.dc.dockerserve.exception.ImageException;
 import com.zumin.dc.dockerserve.pojo.body.BuildImageBody;
@@ -24,6 +22,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,19 +38,12 @@ public class ImageController extends BaseController {
 
   @PostMapping("/build")
   @ApiOperation("构建镜像")
-  @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = BuildImageBody.class, required = true)
-  public void buildImage(BuildImageBody body) {
-    imageService.build(body, DockerFileProcessor.DEFAULT);
-  }
-
-  @PostMapping("/buildJar")
-  @ApiOperation("构建Jar镜像")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = BuildImageBody.class, required = true),
-      @ApiImplicitParam(name = "javaVersion", value = "Java版本", dataTypeClass = String.class, required = true)
+      @ApiImplicitParam(name = "javaVersion", value = "Java版本", dataTypeClass = String.class)
   })
-  public void buildJarImage(BuildImageBody body, @RequestParam(name = "javaVersion", required = false) String javaVersion) {
-    imageService.build(body, new DockerFileJarProcessor(javaVersion));
+  public void buildImage(@Valid BuildImageBody body) {
+    imageService.build(body);
   }
 
   @GetMapping("/search")
@@ -78,7 +70,7 @@ public class ImageController extends BaseController {
   @PostMapping("/modify")
   @ApiOperation("修改应用信息")
   @ApiImplicitParam(name = "body", value = "修改的应用信息", dataTypeClass = ModifyImageBody.class, required = true)
-  public void modify(@RequestBody ModifyImageBody body) {
+  public void modify(@RequestBody @Valid ModifyImageBody body) {
     ImageEntity entity = imageService.getById(body.getId());
     if (entity == null || !DockerServeUtils.checkAccess(entity)) {
       throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);

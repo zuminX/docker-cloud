@@ -41,24 +41,6 @@ public class FileUtils {
   }
 
   /**
-   * 文件格式校验
-   *
-   * @param file 上传的文件
-   */
-  public void assertAllowed(MultipartFile file, String[] allowedExtension) {
-    String extension = getExtension(file);
-    if (allowedExtension != null && !isAllowedExtension(extension, allowedExtension)) {
-      if (allowedExtension == MimeTypeUtils.IMAGE_EXTENSION) {
-        throw new FileException(CommonStatusCode.FILE_EXPECT_IMAGE);
-      } else if (allowedExtension == MimeTypeUtils.MEDIA_EXTENSION) {
-        throw new FileException(CommonStatusCode.FILE_EXPECT_MEDIA);
-      } else {
-        throw new FileException(CommonStatusCode.FILE_TYPE_ILLEGAL);
-      }
-    }
-  }
-
-  /**
    * 判断MIME类型是否是允许的MIME类型
    *
    * @param extension

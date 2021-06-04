@@ -1,5 +1,6 @@
 package com.zumin.dc.common.core.utils.file;
 
+import java.util.List;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -18,19 +19,9 @@ public class MimeTypeUtils {
 
   public final String IMAGE_GIF = "image/gif";
 
-  public final String[] IMAGE_EXTENSION = {"bmp", "gif", "jpg", "jpeg", "png"};
+  public final List<String> IMAGE_EXTENSION = List.of("bmp", "gif", "jpg", "jpeg", "png");
 
-  public final String[] MEDIA_EXTENSION = {"swf", "flv", "mp3", "wav", "wma", "wmv", "mid", "avi", "mpg", "asf", "rm", "rmvb"};
-
-  public final String[] DEFAULT_ALLOWED_EXTENSION = {
-      // 图片
-      "bmp", "gif", "jpg", "jpeg", "png",
-      // word excel powerpoint
-      "doc", "docx", "xls", "xlsx", "ppt", "pptx", "html", "htm", "txt",
-      // 压缩文件
-      "rar", "zip", "gz", "bz2",
-      // pdf
-      "pdf"};
+  public final List<String> MEDIA_EXTENSION = List.of("swf", "flv", "mp3", "wav", "wma", "wmv", "mid", "avi", "mpg", "asf", "rm", "rmvb");
 
   public String getExtension(String prefix) {
     switch (prefix) {

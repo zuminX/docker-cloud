@@ -2,7 +2,7 @@ package com.zumin.dc.dockerserve.controller.user;
 
 import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.common.web.utils.SecurityUtils;
-import com.zumin.dc.dockerserve.pojo.vo.UserStatisticsVO;
+import com.zumin.dc.dockerserve.pojo.vo.UserResourcesStatisticsVO;
 import com.zumin.dc.dockerserve.service.ApplicationService;
 import com.zumin.dc.dockerserve.service.ImageService;
 import com.zumin.dc.dockerserve.service.ServeService;
@@ -20,9 +20,9 @@ public class DashboardController {
 
   @GetMapping("/statistics")
   @ApiOperation("获取当前用户的统计信息")
-  public UserStatisticsVO statistics() {
+  public UserResourcesStatisticsVO statistics() {
     Long userId = SecurityUtils.getUserId();
-    return UserStatisticsVO.builder()
+    return UserResourcesStatisticsVO.builder()
         .applicationTotal(applicationService.countByUserId(userId))
         .imageTotal(imageService.countByUserId(userId))
         .serveTotal(serveService.countByUserId(userId))

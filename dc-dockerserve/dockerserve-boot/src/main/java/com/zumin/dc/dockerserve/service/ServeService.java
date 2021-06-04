@@ -9,14 +9,8 @@ import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
 import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeLinkBody;
-import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
-import com.zumin.dc.dockerserve.utils.DockerServeUtils;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +32,16 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
    */
   public List<ServeEntity> listByApplicationId(Long applicationId) {
     return list(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getApplicationId, applicationId));
+  }
+
+  /**
+   * 列出指定用户的所有服务
+   *
+   * @param userId 用户ID
+   * @return 用户所有的服务
+   */
+  public List<ServeEntity> listByUserId(Long userId) {
+    return list(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getUserId, userId));
   }
 
   /**
@@ -85,39 +89,8 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
     return count(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getUserId, userId));
   }
 
-  /**
-   * 检查创建服务中链接到的服务的可访问性
-   *
-   * @param serveList 创建服务信息列表
-   * @return 若可访问则返回true，否则返回false
-   */
-  public boolean checkLinkServeAccess(List<CreateServeBody> serveList) {
-    return serveList.stream()
-        .map(CreateServeBody::getLinkServeList)
-        .flatMap(Collection::stream)
-        .map(CreateServeLinkBody::getBeLinkServeId)
-        .map(this::getById)
-        .allMatch(DockerServeUtils::checkAccess);
-  }
-
-  /**
-   * 检查创建服务中的端口信息的合法性
-   *
-   * @param serveList 创建服务信息列表
-   * @return 若合法则返回true，否则返回false
-   */
-  public boolean checkPort(List<CreateServeBody> serveList) {
-    List<List<Integer>> portList = ConvertUtils.convert(serveList, CreateServeBody::getPortList);
-    for (List<Integer> ports : portList) {
-      Set<Integer> portSet = new HashSet<>();
-      for (Integer port : ports) {
-        if (!DockerServeUtils.checkPort(port) || portSet.contains(port)) {
-          return false;
-        }
-        portSet.add(port);
-      }
-    }
-    return true;
+  public ServeEntity getByName(String name) {
+    return getOne(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getName, name));
   }
 }
 

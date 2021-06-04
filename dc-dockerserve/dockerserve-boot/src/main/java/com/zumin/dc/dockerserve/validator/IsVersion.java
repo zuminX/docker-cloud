@@ -11,15 +11,15 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * 验证应用类的可访问性注解
+ * 验证镜像版本的合法性注解
  */
 @Target({PARAMETER, FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = CheckApplicationAccessValidator.class)
-public @interface CheckApplicationAccess {
+@Constraint(validatedBy = IsVersionValidator.class)
+public @interface IsVersion {
 
-  String message() default "没有权限访问该应用";
+  String message() default "镜像版本的格式不符合要求";
 
   Class<?>[] groups() default {};
 

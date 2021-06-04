@@ -1,37 +1,32 @@
 package com.zumin.dc.dockerserve.pojo.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
+@ApiModel(description = "镜像表示层类")
 public class ImageVO {
 
+  @ApiModelProperty(value = "镜像ID", required = true)
   private Long id;
-  /**
-   * 名称
-   */
+
+  @ApiModelProperty(value = "名称", required = true)
   private String name;
-  /**
-   * 描述
-   */
+
+  @ApiModelProperty(value = "描述", required = true)
   private String description;
-  /**
-   * 版本
-   */
+
+  @ApiModelProperty(value = "版本", required = true)
   private String version;
-  /**
-   * 用户ID
-   */
+
+  @ApiModelProperty(value = "用户ID", required = true)
   private Long userId;
-  /**
-   * 是否共享
-   */
+
+  @ApiModelProperty(value = "是否共享", required = true)
   private Boolean share;
-  /**
-   * 创建时间
-   */
+
+  @ApiModelProperty(value = "创建时间", required = true)
   private LocalDateTime createTime;
 }

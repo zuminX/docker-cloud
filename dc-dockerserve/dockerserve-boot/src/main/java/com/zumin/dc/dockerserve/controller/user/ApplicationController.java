@@ -2,6 +2,7 @@ package com.zumin.dc.dockerserve.controller.user;
 
 import static com.zumin.dc.common.mybatis.utils.PageUtils.getPage;
 
+import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.core.utils.PublicUtils;
 import com.zumin.dc.common.mybatis.page.Page;
 import com.zumin.dc.common.web.annotation.ComRestController;
@@ -15,6 +16,7 @@ import com.zumin.dc.dockerserve.exception.ServeException;
 import com.zumin.dc.dockerserve.exception.ServeLinkException;
 import com.zumin.dc.dockerserve.pojo.body.CreateApplicationBody;
 import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
+import com.zumin.dc.dockerserve.pojo.body.CreateServeLinkBody;
 import com.zumin.dc.dockerserve.pojo.body.ModifyApplicationBody;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
@@ -26,7 +28,12 @@ import com.zumin.dc.dockerserve.utils.DockerServeUtils;
 import com.zumin.dc.dockerserve.validator.CheckApplicationAccess;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,22 +54,17 @@ public class ApplicationController extends BaseController {
   @PostMapping("/create")
   @ApiOperation("创建应用")
   @ApiImplicitParam(name = "body", value = "创建应用的信息", dataTypeClass = CreateApplicationBody.class, required = true)
-  public void create(@RequestBody CreateApplicationBody body) {
+  public void create(@RequestBody @Valid CreateApplicationBody body) {
     List<CreateServeBody> serveList = body.getServeList();
-    if (!serveService.checkPort(serveList)) {
-      throw new ServeException(DockerServeStatusCode.SERVE_CREATE_PORT_ILLEGAL);
-    }
-    if (!imageService.checkImageAccess(serveList)) {
-      throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);
-    }
-    if (!serveService.checkLinkServeAccess(serveList)) {
-      throw new ServeException(DockerServeStatusCode.SERVE_UNAUTHORIZED_ACCESS);
-    }
-    if (!serveLinkService.checkAlias(serveList)) {
-      throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_ALIAS_ILLEGAL);
-    }
+    assertPort(serveList);
+    assertAlias(serveList);
+    assertImage(serveList);
+    assertLinkServe(serveList);
+    assertServeName(serveList);
+
     saveApplication(body);
   }
+
 
   @GetMapping("/start")
   @ApiOperation("启动应用")
@@ -114,5 +116,70 @@ public class ApplicationController extends BaseController {
     applicationService.save(application);
     List<ServeEntity> serveEntityList = serveService.saveServe(body.getServeList(), application.getId());
     serveLinkService.saveServeLink(body.getServeList(), serveEntityList);
+  }
+
+  /**
+   * 检查创建服务中的端口信息的合法性
+   *
+   * @param serveList 创建服务信息列表
+   */
+  private void assertPort(List<CreateServeBody> serveList) {
+    List<List<Integer>> portList = ConvertUtils.convert(serveList, CreateServeBody::getPortList);
+    portList.forEach(ports -> {
+      Set<Integer> portSet = new HashSet<>();
+      ports.forEach(port -> {
+        if (!DockerServeUtils.checkPort(port) || portSet.contains(port)) {
+          throw new ServeException(DockerServeStatusCode.SERVE_CREATE_PORT_ILLEGAL);
+        }
+        portSet.add(port);
+      });
+    });
+  }
+
+  /**
+   * 检查创建服务所使用的镜像的可访问性
+   *
+   * @param serveList 服务列表
+   */
+  private void assertImage(List<CreateServeBody> serveList) {
+    List<Integer> imageIdList = ConvertUtils.convert(serveList, CreateServeBody::getImageId);
+    imageIdList.stream()
+        .filter(imageId -> !DockerServeUtils.checkAccess(imageService.getById(imageId)))
+        .forEach(imageId -> {
+          throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);
+        });
+  }
+
+  /**
+   * 检查创建服务中链接到的服务的可访问性
+   *
+   * @param serveList 创建服务信息列表
+   */
+  private void assertLinkServe(List<CreateServeBody> serveList) {
+    serveList.stream()
+        .map(CreateServeBody::getLinkServeList)
+        .flatMap(Collection::stream)
+        .map(CreateServeLinkBody::getBeLinkServeId)
+        .map(serveService::getById)
+        .filter(byId -> !DockerServeUtils.checkAccess(byId))
+        .forEach(byId -> {
+          throw new ServeException(DockerServeStatusCode.SERVE_UNAUTHORIZED_ACCESS);
+        });
+  }
+
+  private void assertAlias(List<CreateServeBody> serveList) {
+    if (!serveLinkService.checkAlias(serveList)) {
+      throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_ALIAS_ILLEGAL);
+    }
+  }
+
+  private void assertServeName(List<CreateServeBody> serveList) {
+    List<String> serveNameList = ConvertUtils.convert(serveList, CreateServeBody::getName);
+    serveNameList.stream()
+        .map(serveService::getByName)
+        .filter(Objects::nonNull)
+        .forEach(entity -> {
+          throw new ServeException(DockerServeStatusCode.SERVE_NAME_EXISTS);
+        });
   }
 }
