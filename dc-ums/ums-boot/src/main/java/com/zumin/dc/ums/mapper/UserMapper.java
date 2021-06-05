@@ -5,6 +5,7 @@ import com.zumin.dc.ums.pojo.body.ModifyUserBody;
 import com.zumin.dc.ums.pojo.body.SearchUserBody;
 import com.zumin.dc.ums.pojo.entity.UserEntity;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -69,4 +70,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
    * @return 更新的行数
    */
   int updateModifyById(@Param("user") ModifyUserBody user);
+
+  List<String> selectNicknameByIdIn(@Param("idCollection") Collection<Long> idCollection);
 }

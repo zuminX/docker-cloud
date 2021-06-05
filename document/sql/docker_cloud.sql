@@ -77,9 +77,8 @@ CREATE TABLE `role`
   DEFAULT CHARSET = utf8mb4;
 
 INSERT INTO `role`
-VALUES (1, 'ROLE_USER', '用户'),
-       (2, 'ROLE_ADMIN', '管理员');
-
+VALUES (1, 'ROLE_ADMIN', '管理员'),
+       (2, 'ROLE_USER', '用户');
 
 DROP TABLE IF EXISTS `resource`;
 CREATE TABLE `resource`

@@ -20,11 +20,13 @@ public class DockerServeUtils {
     if (object == null) {
       return false;
     }
+    if (SecurityUtils.isAdmin()) {
+      return true;
+    }
     Object share = FieldUtils.getFieldValue(object, "share");
     if (share instanceof Boolean && (Boolean) share) {
       return true;
     }
-    //TODO 管理员无须受此限制
     Object userId = FieldUtils.getFieldValue(object, "userId");
     return userId instanceof Long && SecurityUtils.getUserId().equals(userId);
   }

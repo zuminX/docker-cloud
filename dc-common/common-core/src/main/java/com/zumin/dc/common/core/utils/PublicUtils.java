@@ -6,10 +6,10 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -32,6 +32,19 @@ public class PublicUtils {
    */
   public String getRandomIdentity() {
     return UUID.fastUUID().toString(true) + System.currentTimeMillis();
+  }
+
+  /**
+   * 判断集合中是否包含指定元素
+   * <p>
+   * 若集合为空或值为null，则都视为不包含
+   *
+   * @param collection 集合
+   * @param value 值
+   * @return 若包含则返回true，否则返回false
+   */
+  public boolean contains(Collection<?> collection, Object value) {
+    return value != null && CollUtil.contains(collection, value);
   }
 
   /**

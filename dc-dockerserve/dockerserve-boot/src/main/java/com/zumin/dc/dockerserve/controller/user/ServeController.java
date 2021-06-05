@@ -55,7 +55,7 @@ public class ServeController extends BaseController {
   }
 
   @GetMapping("/search")
-  @ApiOperation("根据名称搜索当前用户或共享的应用")
+  @ApiOperation("根据名称搜索当前用户或共享的服务")
   @ApiImplicitParam(name = "name", value = "服务名称", dataTypeClass = String.class, required = true)
   public List<ServeNameVO> searchByName(@RequestParam(value = "name") String name) {
     return ConvertUtils.convert(serveService.listShareOrUserIdByName(SecurityUtils.getUserId(), name), serveConvert::convert);

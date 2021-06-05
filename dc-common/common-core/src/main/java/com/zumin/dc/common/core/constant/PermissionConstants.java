@@ -29,4 +29,8 @@ public interface PermissionConstants {
    */
   List<String> ADMIN_ROLE_NAME = Arrays.asList(ADMIN_NAME, USER_NAME);
 
+  /**
+   * 管理员角色ID
+   */
+  Long ADMIN_ROLE_ID = 1L;
 }

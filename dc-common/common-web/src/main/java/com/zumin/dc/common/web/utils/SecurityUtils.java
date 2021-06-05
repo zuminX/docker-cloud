@@ -1,7 +1,6 @@
 package com.zumin.dc.common.web.utils;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONObject;
@@ -43,6 +42,16 @@ public class SecurityUtils {
    */
   public boolean hasAdmin(@NotNull List<String> roleNameList) {
     return roleNameList.stream().anyMatch(s -> s.equals(PermissionConstants.ADMIN_NAME));
+  }
+
+  /**
+   * 判断当前用户是否为管理员
+   *
+   * @return 若是则返回true，否则返回false
+   */
+  public boolean isAdmin() {
+    Set<Long> roleIds = getRoleIds();
+    return roleIds.contains(PermissionConstants.ADMIN_ROLE_ID);
   }
 
   /**

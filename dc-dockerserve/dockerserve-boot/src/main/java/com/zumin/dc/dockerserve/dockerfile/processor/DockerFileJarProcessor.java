@@ -1,7 +1,9 @@
 package com.zumin.dc.dockerserve.dockerfile.processor;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.zumin.dc.common.core.pojo.FileSaveInfo;
+import com.zumin.dc.common.core.utils.PublicUtils;
 import java.io.IOException;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -49,13 +51,13 @@ public class DockerFileJarProcessor implements DockerFileProcessor {
   private String chooseJavaVersion(String path) {
     // 尝试使用用户指定的Java版本
     version = formatJavaVersion(version);
-    if (SUPPORT_VERSION.contains(formatJavaVersion(version))) {
+    if (PublicUtils.contains(SUPPORT_VERSION, version)) {
       return version;
     }
     // 若用户指定的Java版本不合法，则尝试从Jar中的Manifest文件中获取
     String javaVersion = formatJavaVersion(getJavaVersionByJar(path));
     // 若都无法得到合法的Java版本，则使用默认的Java版本
-    return SUPPORT_VERSION.contains(javaVersion) ? javaVersion : DEFAULT_VERSION;
+    return PublicUtils.contains(SUPPORT_VERSION, javaVersion) ? javaVersion : DEFAULT_VERSION;
   }
 
   /**

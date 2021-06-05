@@ -1,7 +1,13 @@
 package com.zumin.dc.dockerserve.enums;
 
-import java.util.Arrays;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+/**
+ * 容器状态
+ */
+@Getter
+@AllArgsConstructor
 public enum ContainerState {
   CREATED("created"),
   RESTARTING("restarting"),
@@ -10,21 +16,18 @@ public enum ContainerState {
   EXITED("exited"),
   ;
 
+  /**
+   * 状态名称
+   */
   private final String name;
 
-  ContainerState(String name) {
-    this.name = name;
-  }
-
+  /**
+   * 判断给定状态字符串是否为运行状态
+   *
+   * @param name 状态
+   * @return 若是运行状态则返回true，否则返回false
+   */
   public static boolean isRunning(String name) {
     return RUNNING.name.equalsIgnoreCase(name);
-  }
-
-  public static ContainerState findByName(String name) {
-    return Arrays.stream(values()).filter(status -> status.name.equals(name)).findFirst().orElse(null);
-  }
-
-  public String getName() {
-    return name;
   }
 }

@@ -130,7 +130,7 @@ public class UserService extends ServiceImpl<UserMapper, UserEntity> {
    * @return 用户对应的昵称列表
    */
   public List<String> listNicknameById(List<Long> userIdList) {
-    return ConvertUtils.convert(baseMapper.selectBatchIds(userIdList), UserEntity::getNickname);
+    return baseMapper.selectNicknameByIdIn(userIdList);
   }
 
   /**
