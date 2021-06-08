@@ -8,5 +8,6 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface RoleMapper extends BaseMapper<RoleEntity> {
+
   List<String> selectNameByUserId(@Param("id") Long id);
 }

@@ -8,7 +8,7 @@ import com.zumin.dc.common.core.utils.PublicUtils;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeCreateBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
    * @return 服务列表
    */
   @Transactional
-  public List<ServeEntity> saveServe(List<CreateServeBody> serveList, Long applicationId) {
+  public List<ServeEntity> saveServe(List<ServeCreateBody> serveList, Long applicationId) {
     List<ServeEntity> serveEntityList = ConvertUtils.convert(serveList, serveBody -> ServeEntity.builder()
         .name(serveBody.getName())
         .description(serveBody.getDescription())
@@ -91,6 +91,10 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
 
   public ServeEntity getByName(String name) {
     return getOne(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getName, name));
+  }
+
+  public ServeEntity getByIndicate(String indicate) {
+    return getOne(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getServeIndicate, indicate));
   }
 }
 

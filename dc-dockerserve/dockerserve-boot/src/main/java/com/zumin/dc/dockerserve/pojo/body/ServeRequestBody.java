@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "请求服务的信息")
-public class RequestServeBody {
+public class ServeRequestBody {
 
   @ApiModelProperty(value = "服务ID", required = true)
   private Long serveId;

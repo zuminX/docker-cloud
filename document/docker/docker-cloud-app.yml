@@ -23,13 +23,13 @@ services:
       - dc-sentinel:sentinel
       - dc-zipkin:zipkin
       - dc-auth:auth
-#  dc-monitor:
-#    image: dc/dc-monitor:1.0.0
-#    container_name: dc-monitor
-#    ports:
-#      - 7000:7000
-#    external_links:
-#      - dc-nacos:nacos
+  dc-monitor:
+    image: dc/dc-monitor:1.0.0
+    container_name: dc-monitor
+    ports:
+      - 7000:7000
+    external_links:
+      - dc-nacos:nacos
   dc-ums:
     image: dc/ums-boot:1.0.0
     container_name: dc-ums

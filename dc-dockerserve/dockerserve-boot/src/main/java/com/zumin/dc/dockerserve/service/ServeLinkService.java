@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.dockerserve.mapper.ServeLinkMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeLinkBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeCreateBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeLinkCreateBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeLinkEntity;
 import java.util.Collection;
@@ -48,11 +48,11 @@ public class ServeLinkService extends ServiceImpl<ServeLinkMapper, ServeLinkEnti
    * @param serveList 服务列表
    * @return 若合法则返回true，否则返回false
    */
-  public boolean checkAlias(List<CreateServeBody> serveList) {
+  public boolean checkAlias(List<ServeCreateBody> serveList) {
     List<String> aliasList = serveList.stream()
-        .map(CreateServeBody::getLinkServeList)
+        .map(ServeCreateBody::getLinkServeList)
         .flatMap(Collection::stream)
-        .map(CreateServeLinkBody::getAlias)
+        .map(ServeLinkCreateBody::getAlias)
         .collect(Collectors.toList());
     return aliasList.stream()
         .noneMatch(alias -> StrUtil.isBlank(alias) || alias.length() > ALIAS_MAX_LENGTH || !StrUtil.isAllCharMatch(alias, CharUtil::isLetter));
@@ -65,10 +65,10 @@ public class ServeLinkService extends ServiceImpl<ServeLinkMapper, ServeLinkEnti
    * @param serveEntityList 服务列表
    */
   @Transactional
-  public void saveServeLink(List<CreateServeBody> serveList, List<ServeEntity> serveEntityList) {
+  public void saveServeLink(List<ServeCreateBody> serveList, List<ServeEntity> serveEntityList) {
     IntStream.range(0, serveEntityList.size()).forEach(i -> {
       ServeEntity serveEntity = serveEntityList.get(i);
-      CreateServeBody serveBody = serveList.get(i);
+      ServeCreateBody serveBody = serveList.get(i);
       List<ServeLinkEntity> linkEntityList = ConvertUtils.convert(serveBody.getLinkServeList(), linkBody -> ServeLinkEntity.builder()
           .serveIndicate(serveEntity.getServeIndicate())
           .beServeIndicate(serveMapper.selectById(linkBody.getBeLinkServeId()).getServeIndicate())

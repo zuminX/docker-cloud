@@ -4,13 +4,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 镜像名称表示层类
+ */
 @Data
-@ApiModel(description = "镜像名称表示层类")
 public class ImageNameVO {
 
-  @ApiModelProperty(value = "镜像ID", required = true)
+  /**
+   * 镜像ID
+   */
   private Long id;
 
-  @ApiModelProperty(value = "镜像名称", required = true)
+  /**
+   * 镜像名称
+   */
   private String name;
 }

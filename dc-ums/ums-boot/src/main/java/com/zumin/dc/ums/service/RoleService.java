@@ -7,6 +7,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 角色的业务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleService extends ServiceImpl<RoleMapper, RoleEntity> {

@@ -11,8 +11,8 @@ import com.zumin.dc.dockerserve.controller.BaseController;
 import com.zumin.dc.dockerserve.convert.ImageConvert;
 import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
 import com.zumin.dc.dockerserve.exception.ImageException;
-import com.zumin.dc.dockerserve.pojo.body.BuildImageBody;
-import com.zumin.dc.dockerserve.pojo.body.ModifyImageBody;
+import com.zumin.dc.dockerserve.pojo.body.ImageBuildBody;
+import com.zumin.dc.dockerserve.pojo.body.ImageModifyBody;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import com.zumin.dc.dockerserve.pojo.vo.ImageNameVO;
 import com.zumin.dc.dockerserve.pojo.vo.ImageVO;
@@ -39,10 +39,10 @@ public class ImageController extends BaseController {
   @PostMapping("/build")
   @ApiOperation("构建镜像")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = BuildImageBody.class, required = true),
+      @ApiImplicitParam(name = "body", value = "构建镜像的信息", dataTypeClass = ImageBuildBody.class, required = true),
       @ApiImplicitParam(name = "javaVersion", value = "Java版本", dataTypeClass = String.class)
   })
-  public void buildImage(@Valid BuildImageBody body) {
+  public void buildImage(@Valid ImageBuildBody body) {
     imageService.build(body);
   }
 
@@ -69,8 +69,8 @@ public class ImageController extends BaseController {
 
   @PostMapping("/modify")
   @ApiOperation("修改应用信息")
-  @ApiImplicitParam(name = "body", value = "修改的应用信息", dataTypeClass = ModifyImageBody.class, required = true)
-  public void modify(@RequestBody @Valid ModifyImageBody body) {
+  @ApiImplicitParam(name = "body", value = "修改的应用信息", dataTypeClass = ImageModifyBody.class, required = true)
+  public void modify(@RequestBody @Valid ImageModifyBody body) {
     ImageEntity entity = imageService.getById(body.getId());
     if (entity == null || !DockerServeUtils.checkAccess(entity)) {
       throw new ImageException(DockerServeStatusCode.IMAGE_UNAUTHORIZED_ACCESS);

@@ -9,17 +9,24 @@ import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.common.web.utils.SecurityUtils;
 import com.zumin.dc.dockerserve.controller.BaseController;
 import com.zumin.dc.dockerserve.convert.ApplicationConvert;
+import com.zumin.dc.dockerserve.convert.ServeConvert;
+import com.zumin.dc.dockerserve.convert.ServeLinkConvert;
 import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
 import com.zumin.dc.dockerserve.exception.ApplicationException;
 import com.zumin.dc.dockerserve.exception.ImageException;
 import com.zumin.dc.dockerserve.exception.ServeException;
 import com.zumin.dc.dockerserve.exception.ServeLinkException;
-import com.zumin.dc.dockerserve.pojo.body.CreateApplicationBody;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeBody;
-import com.zumin.dc.dockerserve.pojo.body.CreateServeLinkBody;
-import com.zumin.dc.dockerserve.pojo.body.ModifyApplicationBody;
+import com.zumin.dc.dockerserve.pojo.body.ApplicationCreateBody;
+import com.zumin.dc.dockerserve.pojo.body.ApplicationModifyBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeCreateBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeLinkCreateBody;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
+import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
+import com.zumin.dc.dockerserve.pojo.entity.ServeLinkEntity;
+import com.zumin.dc.dockerserve.pojo.vo.ApplicationDetailVO;
+import com.zumin.dc.dockerserve.pojo.vo.ServeDetailVO;
+import com.zumin.dc.dockerserve.pojo.vo.ServeLinkDetailVO;
 import com.zumin.dc.dockerserve.service.ApplicationService;
 import com.zumin.dc.dockerserve.service.ImageService;
 import com.zumin.dc.dockerserve.service.ServeLinkService;
@@ -28,6 +35,7 @@ import com.zumin.dc.dockerserve.utils.DockerServeUtils;
 import com.zumin.dc.dockerserve.validator.CheckApplicationAccess;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -49,13 +57,16 @@ public class ApplicationController extends BaseController {
   private final ImageService imageService;
   private final ServeService serveService;
   private final ServeLinkService serveLinkService;
+
   private final ApplicationConvert applicationConvert;
+  private final ServeConvert serveConvert;
+  private final ServeLinkConvert serveLinkConvert;
 
   @PostMapping("/create")
   @ApiOperation("创建应用")
-  @ApiImplicitParam(name = "body", value = "创建应用的信息", dataTypeClass = CreateApplicationBody.class, required = true)
-  public void create(@RequestBody @Valid CreateApplicationBody body) {
-    List<CreateServeBody> serveList = body.getServeList();
+  @ApiImplicitParam(name = "body", value = "创建应用的信息", dataTypeClass = ApplicationCreateBody.class, required = true)
+  public void create(@RequestBody @Valid ApplicationCreateBody body) {
+    List<ServeCreateBody> serveList = body.getServeList();
     assertPort(serveList);
     assertAlias(serveList);
     assertImage(serveList);
@@ -65,6 +76,21 @@ public class ApplicationController extends BaseController {
     saveApplication(body);
   }
 
+  @GetMapping("/detail")
+  @ApiOperation("查看应用详情")
+  @ApiImplicitParam(name = "application", value = "应用ID", dataTypeClass = Long.class, required = true)
+  public ApplicationDetailVO detail(@RequestParam("application") @CheckApplicationAccess ApplicationEntity application) {
+    List<ServeEntity> serveEntityList = serveService.listByApplicationId(application.getId());
+    List<ServeDetailVO> serveDetailVOList = new ArrayList<>();
+    for (ServeEntity serveEntity : serveEntityList) {
+      List<ServeLinkEntity> serveLinkEntities = serveLinkService.listByServeIndicate(serveEntity.getServeIndicate());
+      List<ServeLinkDetailVO> detailVOList = ConvertUtils.convert(serveLinkEntities,
+          serveLink -> serveLinkConvert.convert(serveLink, serveService.getByIndicate(serveLink.getServeIndicate())));
+      ImageEntity imageEntity = imageService.getByIndicate(serveEntity.getImageIndicate());
+      serveDetailVOList.add(serveConvert.convertToDetailVO(serveEntity, imageEntity, detailVOList));
+    }
+    return applicationConvert.convert(application, serveDetailVOList);
+  }
 
   @GetMapping("/start")
   @ApiOperation("启动应用")
@@ -96,8 +122,8 @@ public class ApplicationController extends BaseController {
 
   @PostMapping("/modify")
   @ApiOperation("修改应用信息")
-  @ApiImplicitParam(name = "body", value = "修改应用的信息", dataTypeClass = ModifyApplicationBody.class, required = true)
-  public void modify(@RequestBody ModifyApplicationBody body) {
+  @ApiImplicitParam(name = "body", value = "修改应用的信息", dataTypeClass = ApplicationModifyBody.class, required = true)
+  public void modify(@RequestBody ApplicationModifyBody body) {
     ApplicationEntity entity = applicationService.getById(body.getId());
     if (!DockerServeUtils.checkAccess(entity)) {
       throw new ApplicationException(DockerServeStatusCode.APPLICATION_UNAUTHORIZED_ACCESS);
@@ -111,7 +137,7 @@ public class ApplicationController extends BaseController {
    * @param body 创建应用的信息
    */
   @Transactional
-  protected void saveApplication(CreateApplicationBody body) {
+  protected void saveApplication(ApplicationCreateBody body) {
     ApplicationEntity application = applicationConvert.convert(body, SecurityUtils.getUserId());
     applicationService.save(application);
     List<ServeEntity> serveEntityList = serveService.saveServe(body.getServeList(), application.getId());
@@ -123,8 +149,8 @@ public class ApplicationController extends BaseController {
    *
    * @param serveList 创建服务信息列表
    */
-  private void assertPort(List<CreateServeBody> serveList) {
-    List<List<Integer>> portList = ConvertUtils.convert(serveList, CreateServeBody::getPortList);
+  private void assertPort(List<ServeCreateBody> serveList) {
+    List<List<Integer>> portList = ConvertUtils.convert(serveList, ServeCreateBody::getPortList);
     portList.forEach(ports -> {
       Set<Integer> portSet = new HashSet<>();
       ports.forEach(port -> {
@@ -141,8 +167,8 @@ public class ApplicationController extends BaseController {
    *
    * @param serveList 服务列表
    */
-  private void assertImage(List<CreateServeBody> serveList) {
-    List<Integer> imageIdList = ConvertUtils.convert(serveList, CreateServeBody::getImageId);
+  private void assertImage(List<ServeCreateBody> serveList) {
+    List<Integer> imageIdList = ConvertUtils.convert(serveList, ServeCreateBody::getImageId);
     imageIdList.stream()
         .filter(imageId -> !DockerServeUtils.checkAccess(imageService.getById(imageId)))
         .forEach(imageId -> {
@@ -155,11 +181,11 @@ public class ApplicationController extends BaseController {
    *
    * @param serveList 创建服务信息列表
    */
-  private void assertLinkServe(List<CreateServeBody> serveList) {
+  private void assertLinkServe(List<ServeCreateBody> serveList) {
     serveList.stream()
-        .map(CreateServeBody::getLinkServeList)
+        .map(ServeCreateBody::getLinkServeList)
         .flatMap(Collection::stream)
-        .map(CreateServeLinkBody::getBeLinkServeId)
+        .map(ServeLinkCreateBody::getBeLinkServeId)
         .map(serveService::getById)
         .filter(byId -> !DockerServeUtils.checkAccess(byId))
         .forEach(byId -> {
@@ -167,14 +193,14 @@ public class ApplicationController extends BaseController {
         });
   }
 
-  private void assertAlias(List<CreateServeBody> serveList) {
+  private void assertAlias(List<ServeCreateBody> serveList) {
     if (!serveLinkService.checkAlias(serveList)) {
       throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_ALIAS_ILLEGAL);
     }
   }
 
-  private void assertServeName(List<CreateServeBody> serveList) {
-    List<String> serveNameList = ConvertUtils.convert(serveList, CreateServeBody::getName);
+  private void assertServeName(List<ServeCreateBody> serveList) {
+    List<String> serveNameList = ConvertUtils.convert(serveList, ServeCreateBody::getName);
     serveNameList.stream()
         .map(serveService::getByName)
         .filter(Objects::nonNull)

@@ -1,25 +1,35 @@
 package com.zumin.dc.dockeradmin.service;
 
-
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Config;
-import com.zumin.dc.dockeradmin.convert.ConfigConvert;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 配置的服务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class ConfigService {
 
   private final DockerClient dockerClient;
 
-  public List<Config> listOfAllConfig() {
+  /**
+   * 列出所有的配置
+   *
+   * @return 配置列表
+   */
+  public List<Config> list() {
     return dockerClient.listConfigsCmd().exec();
   }
 
-  public void deleteConfig(String configId) {
-    dockerClient.removeConfigCmd(configId).exec();
+  /**
+   * 删除指定的配置
+   *
+   * @param id 配置ID
+   */
+  public void delete(String id) {
+    dockerClient.removeConfigCmd(id).exec();
   }
 }

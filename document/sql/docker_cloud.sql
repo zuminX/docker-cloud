@@ -63,7 +63,7 @@ CREATE TABLE `user_role`
 INSERT INTO `user_role`
 VALUES (1, 1, 1),
        (2, 1, 2),
-       (3, 2, 1);
+       (3, 2, 2);
 
 
 DROP TABLE IF EXISTS `role`;

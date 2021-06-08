@@ -5,6 +5,9 @@ import com.zumin.dc.dockeradmin.pojo.vo.ConfigVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * 配置类的转换器类
+ */
 @Mapper
 public interface ConfigConvert {
 

@@ -5,6 +5,9 @@ import com.zumin.dc.dockeradmin.pojo.vo.VersionVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * 版本类的转换器类
+ */
 @Mapper
 public interface VersionConvert {
 

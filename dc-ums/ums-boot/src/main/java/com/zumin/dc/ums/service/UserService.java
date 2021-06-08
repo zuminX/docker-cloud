@@ -11,7 +11,6 @@ import com.zumin.dc.common.core.auth.AuthGrantType;
 import com.zumin.dc.common.core.auth.AuthParamName;
 import com.zumin.dc.common.core.constant.PermissionConstants;
 import com.zumin.dc.common.core.result.CommonResult;
-import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.mybatis.page.Page;
 import com.zumin.dc.common.mybatis.utils.PageUtils;
 import com.zumin.dc.common.web.log.BusinessType;
@@ -39,6 +38,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 用户的业务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService extends ServiceImpl<UserMapper, UserEntity> {

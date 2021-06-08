@@ -14,6 +14,6 @@ spring:
           - data-id: redis.yaml
           - data-id: datasource.yaml
           - data-id: openfeign.yaml
-          - data-id: endpoints.yaml
+          - data-id: web.yaml
           - data-id: sleuth.yaml
           - data-id: sentinel.yaml

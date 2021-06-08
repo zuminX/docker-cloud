@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * 统计用户信息的业务层类
+ * 用户统计的业务层类
  */
 @Service
 @RequiredArgsConstructor

@@ -17,7 +17,7 @@ import com.zumin.dc.dockerserve.dockerfile.DockerFileBuilder;
 import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileJarProcessor;
 import com.zumin.dc.dockerserve.dockerfile.processor.DockerFileProcessor;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
-import com.zumin.dc.dockerserve.pojo.body.BuildImageBody;
+import com.zumin.dc.dockerserve.pojo.body.ImageBuildBody;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +39,10 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
 
   private final FileService fileService;
   private final ImageConvert imageConvert;
+
+  public ImageEntity getByIndicate(String indicate) {
+    return getOne(Wrappers.lambdaQuery(ImageEntity.class).eq(ImageEntity::getIndicate, indicate));
+  }
 
   /**
    * 根据名称列出当前用户的镜像
@@ -88,7 +92,7 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
    *
    * @param body 构建镜像的信息
    */
-  public void build(BuildImageBody body) {
+  public void build(ImageBuildBody body) {
     FileSaveInfo info = buildSaveInfo(body);
     fileService.save(info);
     String imageIndicate = buildImage(info, body.getVersion());
@@ -125,7 +129,7 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
    * @param body 构建镜像的信息
    * @return 文件保存信息
    */
-  private FileSaveInfo buildSaveInfo(BuildImageBody body) {
+  private FileSaveInfo buildSaveInfo(ImageBuildBody body) {
     InputStream inputStream;
     try {
       inputStream = body.getFile().getInputStream();

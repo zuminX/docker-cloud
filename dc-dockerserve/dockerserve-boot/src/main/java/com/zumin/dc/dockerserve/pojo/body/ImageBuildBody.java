@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @ApiModel(description = "构建镜像的信息")
-public class BuildImageBody {
+public class ImageBuildBody {
 
   @ApiModelProperty(value = "文件", required = true)
   @NotNull(message = "必须需要构建镜像的文件")

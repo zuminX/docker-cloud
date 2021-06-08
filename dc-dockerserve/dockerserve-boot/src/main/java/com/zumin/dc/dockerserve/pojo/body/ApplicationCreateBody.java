@@ -2,18 +2,15 @@ package com.zumin.dc.dockerserve.pojo.body;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@ApiModel(description = "修改应用的信息")
-public class ModifyApplicationBody {
-
-  @ApiModelProperty(value = "应用ID", required = true)
-  @NotNull(message = "未指定修改的应用")
-  private Long id;
+@ApiModel(description = "创建应用的信息")
+public class ApplicationCreateBody {
 
   @ApiModelProperty(value = "名称", required = true)
   @NotEmpty(message = "应用名称不能为空")
@@ -27,4 +24,8 @@ public class ModifyApplicationBody {
   @ApiModelProperty(value = "是否共享", required = true)
   @NotNull(message = "应用共享状态不能为空")
   private Boolean share;
+
+  @ApiModelProperty(value = "服务列表", required = true)
+  @NotEmpty(message = "应用至少需要一个服务")
+  private List<ServeCreateBody> serveList;
 }

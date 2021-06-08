@@ -10,6 +10,9 @@ import java.util.Map;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * 容器类的转换器类
+ */
 @Mapper
 public interface ContainerConvert {
 

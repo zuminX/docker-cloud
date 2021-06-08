@@ -7,19 +7,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 用户拥有的资源的统计表示层类
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "用户拥有的资源的统计表示层类")
 public class UserResourcesStatisticsVO {
 
-  @ApiModelProperty(value = "应用总数", required = true)
+  /**
+   * 应用总数
+   */
   private int applicationTotal;
 
-  @ApiModelProperty(value = "镜像总数", required = true)
+  /**
+   * 镜像总数
+   */
   private int imageTotal;
 
-  @ApiModelProperty(value = "服务总数", required = true)
+  /**
+   * 服务总数
+   */
   private int serveTotal;
 }

@@ -1,35 +1,41 @@
 package com.zumin.dc.dockerserve.pojo.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+/**
+ * 服务表示层类
+ */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@ApiModel(description = "服务表示层类")
 public class ServeVO {
 
-  @ApiModelProperty(value = "服务ID", required = true)
+  /**
+   * 服务ID
+   */
   private Long id;
 
-  @ApiModelProperty(value = "名称", required = true)
+  /**
+   * 名称
+   */
   private String name;
 
-  @ApiModelProperty(value = "状态", required = true)
+  /**
+   * 状态
+   */
   private String state;
 
-  @ApiModelProperty(value = "描述", required = true)
+  /**
+   * 描述
+   */
   private String description;
 
-  @ApiModelProperty(value = "用户ID", required = true)
+  /**
+   * 用户ID
+   */
   private Long userId;
 
-  @ApiModelProperty(value = "内部端口号", required = true)
+  /**
+   * 内部端口号
+   */
   private Set<Integer> portList;
 }

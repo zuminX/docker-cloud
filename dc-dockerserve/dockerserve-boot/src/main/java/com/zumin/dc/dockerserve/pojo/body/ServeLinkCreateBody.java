@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @ApiModel(description = "创建服务链接的信息")
-public class CreateServeLinkBody {
+public class ServeLinkCreateBody {
 
   @ApiModelProperty(value = "被链接服务的ID", required = true)
   @NotNull(message = "未指定服务的链接服务")

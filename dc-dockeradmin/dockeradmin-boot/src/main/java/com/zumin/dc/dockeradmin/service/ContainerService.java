@@ -6,104 +6,202 @@ import com.github.dockerjava.api.model.Container;
 import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.dockeradmin.enums.ContainerStatus;
 import com.zumin.dc.dockeradmin.pojo.vo.coontainer.ContainerStatsVO;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 容器的服务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class ContainerService {
 
   private final DockerClient dockerClient;
 
-  public List<Container> listOfAllContainers() {
+  /**
+   * 列出所有的容器
+   *
+   * @return 容器列表
+   */
+  public List<Container> list() {
     return dockerClient.listContainersCmd().withShowAll(true).exec();
   }
 
-  public InspectContainerResponse getContainerInfo(String containerId) {
-    return dockerClient.inspectContainerCmd(containerId).exec();
+  /**
+   * 根据容器ID获取容器详情
+   *
+   * @param id 容器ID
+   * @return 容器详情
+   */
+  public InspectContainerResponse getById(String id) {
+    return dockerClient.inspectContainerCmd(id).exec();
   }
 
-  public void restartContainer(String containerId) {
-    InspectContainerResponse info = dockerClient.inspectContainerCmd(containerId).exec();
+  /**
+   * 重启指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void restart(String id) {
+    InspectContainerResponse info = dockerClient.inspectContainerCmd(id).exec();
     if (info != null) {
-      dockerClient.resizeContainerCmd(containerId).exec();
+      dockerClient.resizeContainerCmd(id).exec();
     }
   }
 
-  public void restartContainers(ArrayList<String> containers) {
-    containers.forEach(this::restartContainer);
+  /**
+   * 批量重启指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchRestart(List<String> idList) {
+    idList.forEach(this::restart);
   }
 
-  public void stopContainer(String containerId) {
-    InspectContainerResponse info = dockerClient.inspectContainerCmd(containerId).exec();
+  /**
+   * 停止指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void stop(String id) {
+    InspectContainerResponse info = dockerClient.inspectContainerCmd(id).exec();
     if (info != null) {
-      dockerClient.stopContainerCmd(containerId).exec();
+      dockerClient.stopContainerCmd(id).exec();
     }
   }
 
-  public void stopContainers(ArrayList<String> containers) {
-    containers.forEach(this::stopContainer);
+  /**
+   * 批量停止指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchStop(List<String> idList) {
+    idList.forEach(this::stop);
   }
 
-  public void startContainer(String containerId) {
-    dockerClient.startContainerCmd(containerId).exec();
+  /**
+   * 启动指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void start(String id) {
+    dockerClient.startContainerCmd(id).exec();
   }
 
-  public void startContainers(ArrayList<String> containers) {
-    containers.forEach(this::startContainer);
+  /**
+   * 批量启动指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchStart(List<String> idList) {
+    idList.forEach(this::start);
   }
 
-  public void pauseContainer(String containerId) {
-    dockerClient.pauseContainerCmd(containerId).exec();
+  /**
+   * 暂停指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void pause(String id) {
+    dockerClient.pauseContainerCmd(id).exec();
   }
 
-  public void pauseContainers(ArrayList<String> containers) {
-    containers.forEach(this::pauseContainer);
+  /**
+   * 批量暂停指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchPause(List<String> idList) {
+    idList.forEach(this::pause);
   }
 
-  public void unpauseContainer(String containerId) {
-    dockerClient.unpauseContainerCmd(containerId).exec();
+  /**
+   * 取消暂停指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void unpause(String id) {
+    dockerClient.unpauseContainerCmd(id).exec();
   }
 
-  public void unpauseContainers(ArrayList<String> containers) {
-    containers.forEach(this::unpauseContainer);
+  /**
+   * 批量取消暂停指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchUnpause(List<String> idList) {
+    idList.forEach(this::unpause);
   }
 
-  public void killContainer(String containerId) {
-    InspectContainerResponse info = dockerClient.inspectContainerCmd(containerId).exec();
+  /**
+   * 杀死指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void kill(String id) {
+    InspectContainerResponse info = dockerClient.inspectContainerCmd(id).exec();
     if (info != null) {
-      dockerClient.killContainerCmd(containerId).exec();
+      dockerClient.killContainerCmd(id).exec();
     }
   }
 
-  public void killContainers(ArrayList<String> containers) {
-    containers.forEach(this::killContainer);
+  /**
+   * 批量杀死指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchKill(List<String> idList) {
+    idList.forEach(this::kill);
   }
 
-  public void logContainer(String containerId) {
+  /**
+   * 获取指定容器的日志
+   *
+   * @param id 容器ID
+   */
+  public void log(String id) {
     //TODO 待完成
   }
 
-  public void removeContainer(String containerId) {
-    InspectContainerResponse info = dockerClient.inspectContainerCmd(containerId).exec();
+  /**
+   * 删除指定的容器
+   *
+   * @param id 容器ID
+   */
+  public void remove(String id) {
+    InspectContainerResponse info = dockerClient.inspectContainerCmd(id).exec();
     if (info != null) {
-      dockerClient.removeContainerCmd(containerId).exec();
+      dockerClient.removeContainerCmd(id).exec();
     }
   }
 
-  public void removeContainers(ArrayList<String> containers) {
-    containers.forEach(this::removeContainer);
+  /**
+   * 批量删除指定的容器
+   *
+   * @param idList 容器ID列表
+   */
+  public void batchRemove(List<String> idList) {
+    idList.forEach(this::remove);
   }
 
-  public void renameContainer(String containerId, String newName) {
-    dockerClient.renameContainerCmd(containerId).withName(newName).exec();
+  /**
+   * 对指定容器进行重命名
+   *
+   * @param id      容器ID
+   * @param newName 新的名称
+   */
+  public void rename(String id, String newName) {
+    dockerClient.renameContainerCmd(id).withName(newName).exec();
   }
 
+  /**
+   * 获取容器的统计信息
+   *
+   * @return 容器的统计信息
+   */
   public ContainerStatsVO getStatistics() {
-    List<String> containerStatusList = ConvertUtils.convert(listOfAllContainers(), Container::getState);
+    List<String> containerStatusList = ConvertUtils.convert(list(), Container::getState);
     long createTotal = containerStatusList.stream().filter(status -> status.equals(ContainerStatus.CREATED.getName())).count();
     long runningTotal = containerStatusList.stream().filter(status -> status.equals(ContainerStatus.RUNNING.getName())).count();
     long pausedTotal = containerStatusList.stream().filter(status -> status.equals(ContainerStatus.PAUSED.getName())).count();

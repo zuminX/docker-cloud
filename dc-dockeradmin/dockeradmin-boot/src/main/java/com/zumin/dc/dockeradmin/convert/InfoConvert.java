@@ -5,6 +5,9 @@ import com.zumin.dc.dockeradmin.pojo.vo.InfoVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * 信息类的转换器类
+ */
 @Mapper
 public interface InfoConvert {
 

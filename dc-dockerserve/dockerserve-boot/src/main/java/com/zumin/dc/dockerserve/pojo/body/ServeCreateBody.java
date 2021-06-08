@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @ApiModel(description = "创建服务的信息")
-public class CreateServeBody {
+public class ServeCreateBody {
 
   @ApiModelProperty(value = "镜像ID", required = true)
   @NotNull(message = "未指定服务的镜像")
@@ -34,5 +34,5 @@ public class CreateServeBody {
   private List<Integer> portList;
 
   @ApiModelProperty(value = "链接的服务", required = true)
-  private List<CreateServeLinkBody> linkServeList;
+  private List<ServeLinkCreateBody> linkServeList;
 }

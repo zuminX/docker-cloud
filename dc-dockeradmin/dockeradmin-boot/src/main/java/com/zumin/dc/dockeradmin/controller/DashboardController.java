@@ -1,6 +1,8 @@
 package com.zumin.dc.dockeradmin.controller;
 
 import com.zumin.dc.common.web.annotation.ComRestController;
+import com.zumin.dc.dockeradmin.convert.InfoConvert;
+import com.zumin.dc.dockeradmin.convert.VersionConvert;
 import com.zumin.dc.dockeradmin.pojo.vo.DashBoardStatsVO;
 import com.zumin.dc.dockeradmin.service.ContainerService;
 import com.zumin.dc.dockeradmin.service.ImageService;
@@ -23,6 +25,9 @@ public class DashboardController {
   private final InfoService infoService;
   private final VersionService versionService;
 
+  private final InfoConvert infoConvert;
+  private final VersionConvert versionConvert;
+
   @GetMapping("/stats")
   @ApiOperation("获取Docker统计信息")
   public DashBoardStatsVO stats() {
@@ -31,8 +36,8 @@ public class DashboardController {
         .imageStats(imageService.getStatistics())
         .networkStats(networkService.getStatistics())
         .volumeStats(volumeService.getStatistics())
-        .info(infoService.getInfoVO())
-        .version(versionService.getVersionVO())
+        .info(infoConvert.convert(infoService.get()))
+        .version(versionConvert.convert(versionService.get()))
         .build();
   }
 }

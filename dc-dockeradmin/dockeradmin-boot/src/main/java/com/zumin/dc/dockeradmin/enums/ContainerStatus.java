@@ -1,8 +1,12 @@
 package com.zumin.dc.dockeradmin.enums;
 
-import java.util.Collection;
-import java.util.Collections;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+/**
+ * 容器状态枚举类
+ */
+@AllArgsConstructor
 public enum ContainerStatus {
   CREATED("created"),
   RESTARTING("restarting"),
@@ -11,17 +15,6 @@ public enum ContainerStatus {
   EXITED("exited"),
   ;
 
+  @Getter
   private final String name;
-
-  ContainerStatus(String name) {
-    this.name = name;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public Collection<String> getNameAsArray() {
-    return Collections.singleton(name);
-  }
 }

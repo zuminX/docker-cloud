@@ -7,16 +7,16 @@ import com.zumin.dc.dockeradmin.pojo.vo.InfoVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Docker信息的服务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class InfoService {
 
   private final DockerClient dockerClient;
 
-  private final InfoConvert infoConvert;
-
-  public InfoVO getInfoVO() {
-    Info info = dockerClient.infoCmd().exec();
-    return infoConvert.convert(info);
+  public Info get() {
+    return dockerClient.infoCmd().exec();
   }
 }

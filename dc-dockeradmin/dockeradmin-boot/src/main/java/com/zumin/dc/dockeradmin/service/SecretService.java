@@ -6,17 +6,30 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Docker秘钥的服务层类
+ */
 @Service
 @RequiredArgsConstructor
 public class SecretService {
 
   private final DockerClient dockerClient;
 
-  public List<Secret> listOfAllSecret() {
+  /**
+   * 列出所有的秘钥
+   *
+   * @return 秘钥列表
+   */
+  public List<Secret> list() {
     return dockerClient.listSecretsCmd().exec();
   }
 
-  public void deleteSecret(String secretId) {
-    dockerClient.removeSecretCmd(secretId).exec();
+  /**
+   * 删除指定的秘钥
+   *
+   * @param id 秘钥ID
+   */
+  public void remove(String id) {
+    dockerClient.removeSecretCmd(id).exec();
   }
 }

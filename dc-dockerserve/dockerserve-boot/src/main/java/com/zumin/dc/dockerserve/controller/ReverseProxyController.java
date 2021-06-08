@@ -7,7 +7,7 @@ import com.zumin.dc.common.web.annotation.ComRestController;
 import com.zumin.dc.dockerserve.enums.ContainerState;
 import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
 import com.zumin.dc.dockerserve.exception.ServeException;
-import com.zumin.dc.dockerserve.pojo.body.RequestServeBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeRequestBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.service.ContainerService;
 import com.zumin.dc.dockerserve.service.ReverseProxyService;
@@ -39,7 +39,7 @@ public class ReverseProxyController {
   @ApiImplicitParam(name = "request", value = "HTTP请求", dataTypeClass = HttpServletRequest.class, required = true)
   @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, produces = MediaType.ALL_VALUE)
   public ResponseEntity<?> proxyAll(HttpServletRequest request) {
-    RequestServeBody requestServe = resolveRequestServe(request.getRequestURI());
+    ServeRequestBody requestServe = resolveRequestServe(request.getRequestURI());
     if (requestServe == null) {
       throw new ServeException(DockerServeStatusCode.SERVE_PATH_ILLEGAL);
     }
@@ -67,7 +67,7 @@ public class ReverseProxyController {
    * @param requestServe 请求服务
    * @param portMap      内部端口->访问端口的映射
    */
-  private void assertPort(RequestServeBody requestServe, Map<Integer, Integer> portMap) {
+  private void assertPort(ServeRequestBody requestServe, Map<Integer, Integer> portMap) {
     if (portMap.get(requestServe.getPort()) == null) {
       throw new ServeException(DockerServeStatusCode.SERVE_ACCESS_PORT_ILLEGAL);
     }
@@ -93,7 +93,7 @@ public class ReverseProxyController {
    * @param uri 请求URI
    * @return 若能解析则返回请求服务的信息对象，否则返回null
    */
-  private RequestServeBody resolveRequestServe(String uri) {
+  private ServeRequestBody resolveRequestServe(String uri) {
     uri = StrUtil.removePrefix(uri, PREFIX);
     if (StrUtil.isBlank(uri)) {
       return null;
@@ -115,7 +115,7 @@ public class ReverseProxyController {
     if (serveId == null || port == null) {
       return null;
     }
-    return new RequestServeBody(serveId, port);
+    return new ServeRequestBody(serveId, port);
   }
 
   /**
