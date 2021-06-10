@@ -7,14 +7,14 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@ApiModel(description = "创建服务链接的信息")
-public class ServeLinkCreateBody {
+@ApiModel(description = "保存服务链接的信息")
+public class ServeLinkSaveBody {
 
   @ApiModelProperty(value = "被链接服务的ID", required = true)
   @NotNull(message = "未指定服务的链接服务")
   private Long beLinkServeId;
 
-  @ApiModelProperty(value = "被链接服务的别名", required = true)
+  @ApiModelProperty(value = "被链接服务的名称", required = true)
   @Length(max = 16, message = "镜像名称的字数最多为16")
-  private String alias;
+  private String name;
 }

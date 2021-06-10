@@ -19,7 +19,7 @@ public class ServeLinkDetailVO {
   private String beLinkServeName;
 
   /**
-   * 被链接服务的别名
+   * 被链接服务的名称
    */
-  private String alias;
+  private String name;
 }

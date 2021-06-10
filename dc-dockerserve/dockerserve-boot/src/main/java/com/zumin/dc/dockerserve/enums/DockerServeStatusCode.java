@@ -32,7 +32,7 @@ public enum DockerServeStatusCode implements StatusCode {
   SERVE_NAME_EXISTS(46, "该服务名已被占用，请使用其他名称"),
 
   SERVE_LINK_ERROR(50, "服务器在处理服务链接时发生了错误"),
-  SERVE_LINK_ALIAS_ILLEGAL(51, "服务别名不合法");
+  SERVE_LINK_NAME_ILLEGAL(51, "服务链接名称不合法");
 
   /**
    * 编号

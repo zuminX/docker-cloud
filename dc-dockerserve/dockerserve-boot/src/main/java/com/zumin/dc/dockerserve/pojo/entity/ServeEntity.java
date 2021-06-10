@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  * 服务表对象的实体类
  */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "serve")
@@ -27,6 +27,12 @@ public class ServeEntity {
    */
   @TableField(value = "`name`")
   private String name;
+
+  /**
+   * 链接名称
+   */
+  @TableField(value = "`link_name`")
+  private String linkName;
 
   /**
    * 描述
@@ -51,12 +57,6 @@ public class ServeEntity {
    */
   @TableField(value = "image_indicate")
   private String imageIndicate;
-
-  /**
-   * 容器名称
-   */
-  @TableField(value = "container_name")
-  private String containerName;
 
   /**
    * 环境信息（以分号分割）

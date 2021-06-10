@@ -10,17 +10,16 @@
     <result column="share" jdbcType="TINYINT" property="share"/>
     <result column="serve_indicate" jdbcType="VARCHAR" property="serveIndicate"/>
     <result column="image_indicate" jdbcType="VARCHAR" property="imageIndicate"/>
-    <result column="container_name" jdbcType="VARCHAR" property="containerName"/>
     <result column="environment" jdbcType="VARCHAR" property="environment"/>
     <result column="port" jdbcType="VARCHAR" property="port"/>
     <result column="volume" jdbcType="VARCHAR" property="volume"/>
     <result column="application_id" jdbcType="BIGINT" property="applicationId"/>
     <result column="user_id" jdbcType="BIGINT" property="userId"/>
+    <result column="link_name" property="linkName"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `name`, description, `share`, serve_indicate, image_indicate, container_name,
-    environment, port, volume, application_id, user_id
+    id, `name`,link_name, description, `share`, serve_indicate, image_indicate, environment, port, volume, application_id, user_id
   </sql>
 
   <select id="selectByUserIdOrShareAndNameLike" resultMap="BaseResultMap">

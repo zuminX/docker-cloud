@@ -1,14 +1,14 @@
 package com.zumin.dc.dockerserve.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.core.utils.PublicUtils;
 import com.zumin.dc.common.web.utils.SecurityUtils;
+import com.zumin.dc.dockerserve.convert.ServeConvert;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
-import com.zumin.dc.dockerserve.pojo.body.ServeCreateBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeSaveBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
 
   private final ImageMapper imageMapper;
+  private final ServeConvert serveConvert;
 
   /**
    * 列出应用的所有服务
@@ -52,18 +53,14 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
    * @return 服务列表
    */
   @Transactional
-  public List<ServeEntity> saveServe(List<ServeCreateBody> serveList, Long applicationId) {
-    List<ServeEntity> serveEntityList = ConvertUtils.convert(serveList, serveBody -> ServeEntity.builder()
-        .name(serveBody.getName())
-        .description(serveBody.getDescription())
-        .share(serveBody.getShare())
-        .userId(SecurityUtils.getUserId())
-        .serveIndicate(PublicUtils.getRandomIdentity() + "-" + SecurityUtils.getUserId())
-        .imageIndicate(imageMapper.selectById(serveBody.getImageId()).getIndicate())
-        .containerName(serveBody.getName())
-        .port(StrUtil.join(";", serveBody.getPortList()))
-        .applicationId(applicationId)
-        .build());
+  public List<ServeEntity> saveServe(List<ServeSaveBody> serveList, Long applicationId) {
+    Long userId = SecurityUtils.getUserId();
+    List<ServeEntity> serveEntityList = ConvertUtils.convert(serveList,
+        serveBody -> serveConvert.convertToEntity(serveBody, applicationId).toBuilder()
+            .userId(userId)
+            .serveIndicate(generateServeIndicate(userId))
+            .imageIndicate(imageMapper.selectById(serveBody.getImageId()).getIndicate())
+            .build());
     saveBatch(serveEntityList);
     return serveEntityList;
   }
@@ -89,13 +86,30 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
     return count(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getUserId, userId));
   }
 
+  /**
+   * 获取指定名称的服务
+   *
+   * @param name 服务名称
+   * @return 服务
+   */
   public ServeEntity getByName(String name) {
     return getOne(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getName, name));
   }
 
+  /**
+   * 获取指定标识的服务
+   *
+   * @param indicate 服务标识
+   * @return 服务
+   */
   public ServeEntity getByIndicate(String indicate) {
     return getOne(Wrappers.lambdaQuery(ServeEntity.class).eq(ServeEntity::getServeIndicate, indicate));
   }
+
+  private String generateServeIndicate(Long userId) {
+    return PublicUtils.getRandomIdentity() + "-" + userId;
+  }
+
 }
 
 

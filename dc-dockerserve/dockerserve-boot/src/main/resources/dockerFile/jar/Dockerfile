@@ -1,2 +1,3 @@
 FROM openjdk:${version}-jre
-ENTRYPOINT ["java","-jar","/${name}"]
+ADD ${name}.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]

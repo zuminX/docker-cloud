@@ -9,8 +9,11 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@ApiModel(description = "创建应用的信息")
-public class ApplicationCreateBody {
+@ApiModel(description = "保存应用的信息")
+public class ApplicationSaveBody {
+
+  @ApiModelProperty("应用ID")
+  private Long id;
 
   @ApiModelProperty(value = "名称", required = true)
   @NotEmpty(message = "应用名称不能为空")
@@ -27,5 +30,5 @@ public class ApplicationCreateBody {
 
   @ApiModelProperty(value = "服务列表", required = true)
   @NotEmpty(message = "应用至少需要一个服务")
-  private List<ServeCreateBody> serveList;
+  private List<ServeSaveBody> serveList;
 }

@@ -1,7 +1,7 @@
 package com.zumin.dc.dockerserve.convert;
 
 import cn.hutool.core.util.StrUtil;
-import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
+import com.zumin.dc.dockerserve.pojo.body.ServeSaveBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import com.zumin.dc.dockerserve.pojo.vo.ServeDetailVO;
 import com.zumin.dc.dockerserve.pojo.vo.ServeLinkDetailVO;
@@ -22,15 +22,26 @@ public interface ServeConvert {
 
   ServeNameVO convertToNameVO(ServeEntity entity);
 
-  @Mapping(target = "portList", source = "port")
+  @Mapping(target = "portList", source = "entity.port")
   ServeVO convertToVO(ServeEntity entity, String state);
 
-  @Mapping(target = "imageId", source = "imageEntity.id")
-  @Mapping(target = "imageName", source = "imageEntity.name")
   @Mapping(target = "portList", source = "serveEntity.port")
-  ServeDetailVO convertToDetailVO(ServeEntity serveEntity, ImageEntity imageEntity, List<ServeLinkDetailVO> linkServeList);
+  ServeDetailVO convertToDetailVO(ServeEntity serveEntity, Long imageId, String imageName, List<ServeLinkDetailVO> linkServeList);
+
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "volume", ignore = true)
+  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "serveIndicate", ignore = true)
+  @Mapping(target = "imageIndicate", ignore = true)
+  @Mapping(target = "environment", ignore = true)
+  @Mapping(target = "port", source = "body.portList")
+  ServeEntity convertToEntity(ServeSaveBody body, Long applicationId);
 
   default Set<Integer> splitPort(String port) {
     return Arrays.stream(StrUtil.split(port, ";")).map(Integer::parseInt).collect(Collectors.toSet());
+  }
+
+  default String joinPort(Set<Integer> port) {
+    return StrUtil.join(";", port);
   }
 }

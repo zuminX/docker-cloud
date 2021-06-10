@@ -14,5 +14,6 @@ public interface ServeLinkConvert {
 
   @Mapping(target = "beLinkServeId", source = "serveEntity.id")
   @Mapping(target = "beLinkServeName", source = "serveEntity.name")
+  @Mapping(target = "name", source = "serveLinkEntity.name")
   ServeLinkDetailVO convert(ServeLinkEntity serveLinkEntity, ServeEntity serveEntity);
 }

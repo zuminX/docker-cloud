@@ -1,6 +1,7 @@
 package com.zumin.dc.dockerserve.pojo.vo;
 
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -35,9 +36,14 @@ public class ServeDetailVO {
   private String name;
 
   /**
+   * 链接名称
+   */
+  private String linkName;
+
+  /**
    * 内部端口
    */
-  private List<Integer> portList;
+  private Set<Integer> portList;
 
   /**
    * 链接的服务

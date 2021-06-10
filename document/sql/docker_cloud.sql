@@ -162,10 +162,10 @@ CREATE TABLE `serve`
 (
     `id`             bigint AUTO_INCREMENT,
     `name`           varchar(64) COMMENT '名称',
+    `link_name`      varchar(16) COMMENT '链接名称',
     `description`    varchar(512) COMMENT '描述',
     `serve_indicate` varchar(64) NOT NULL COMMENT '服务标识',
     `image_indicate` varchar(64) NOT NULL COMMENT '镜像标识',
-    `container_name` varchar(64) NOT NULL COMMENT '容器名称',
     `environment`    varchar(512) COMMENT '环境信息（以分号分割）',
     `port`           varchar(64) COMMENT '端口信息（以分号分割）',
     `volume`         varchar(256) COMMENT '挂载目录（以分号分割）',
@@ -179,7 +179,7 @@ CREATE TABLE `serve`
   ROW_FORMAT = Dynamic;
 
 INSERT INTO `serve`
-VALUES (1, '测试服务', '测试服务', 1, 'test-01', '735af156ac7b', 'test-01', NULL, '8080', NULL, 1, 1);
+VALUES (1, '测试服务', 'test', '测试服务', 'test-01', '735af156ac7b', NULL, '8080', NULL, 1, 1, 1);
 
 DROP TABLE IF EXISTS `serve_link`;
 CREATE TABLE `serve_link`
@@ -187,7 +187,7 @@ CREATE TABLE `serve_link`
     `id`                bigint AUTO_INCREMENT,
     `serve_indicate`    varchar(64) NOT NULL COMMENT '链接服务的标识',
     `be_serve_indicate` varchar(64) NOT NULL COMMENT '被链接服务的标识',
-    `alias`             varchar(16) COMMENT '被链接服务的别名',
+    `name`              varchar(16) COMMENT '被链接服务的名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4

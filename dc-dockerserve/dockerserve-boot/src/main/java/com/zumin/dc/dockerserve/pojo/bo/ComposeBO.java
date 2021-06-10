@@ -1,6 +1,7 @@
 package com.zumin.dc.dockerserve.pojo.bo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class ComposeBO {
     private List<String> environment;
     private List<String> ports;
     private List<String> volumes;
-    private List<String> external_links;
+    private Collection<String> external_links;
 
     public static ComposeServiceBOBuilder builder() {
       return new ComposeServiceBOBuilder();
@@ -46,7 +47,7 @@ public class ComposeBO {
       private List<String> environment;
       private List<String> ports;
       private List<String> volumes;
-      private List<String> external_links;
+      private Collection<String> external_links;
 
       ComposeServiceBOBuilder() {
         this.environment = new ArrayList<>();
@@ -80,7 +81,7 @@ public class ComposeBO {
         return this;
       }
 
-      public ComposeServiceBOBuilder external_links(List<String> external_links) {
+      public ComposeServiceBOBuilder external_links(Collection<String> external_links) {
         this.external_links = external_links;
         return this;
       }

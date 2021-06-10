@@ -35,8 +35,8 @@ public class ServeLinkEntity {
   private String beServeIndicate;
 
   /**
-   * 被链接服务的别名
+   * 被链接服务的名称
    */
-  @TableField(value = "`alias`")
-  private String alias;
+  @TableField(value = "`name`")
+  private String name;
 }

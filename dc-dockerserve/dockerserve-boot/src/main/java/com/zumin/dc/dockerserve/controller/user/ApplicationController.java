@@ -16,10 +16,10 @@ import com.zumin.dc.dockerserve.exception.ApplicationException;
 import com.zumin.dc.dockerserve.exception.ImageException;
 import com.zumin.dc.dockerserve.exception.ServeException;
 import com.zumin.dc.dockerserve.exception.ServeLinkException;
-import com.zumin.dc.dockerserve.pojo.body.ApplicationCreateBody;
 import com.zumin.dc.dockerserve.pojo.body.ApplicationModifyBody;
-import com.zumin.dc.dockerserve.pojo.body.ServeCreateBody;
-import com.zumin.dc.dockerserve.pojo.body.ServeLinkCreateBody;
+import com.zumin.dc.dockerserve.pojo.body.ApplicationSaveBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeLinkSaveBody;
+import com.zumin.dc.dockerserve.pojo.body.ServeSaveBody;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ImageEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
@@ -62,19 +62,29 @@ public class ApplicationController extends BaseController {
   private final ServeConvert serveConvert;
   private final ServeLinkConvert serveLinkConvert;
 
-  @PostMapping("/create")
-  @ApiOperation("创建应用")
-  @ApiImplicitParam(name = "body", value = "创建应用的信息", dataTypeClass = ApplicationCreateBody.class, required = true)
-  public void create(@RequestBody @Valid ApplicationCreateBody body) {
-    List<ServeCreateBody> serveList = body.getServeList();
+  @PostMapping("/save")
+  @ApiOperation("保存应用")
+  @ApiImplicitParam(name = "body", value = "保存应用的信息", dataTypeClass = ApplicationSaveBody.class, required = true)
+  public void create(@RequestBody @Valid ApplicationSaveBody body) {
+    List<ServeSaveBody> serveList = body.getServeList();
     assertPort(serveList);
-    assertAlias(serveList);
+    assertLinkName(serveList);
     assertImage(serveList);
     assertLinkServe(serveList);
     assertServeName(serveList);
 
-    saveApplication(body);
+    Long applicationId = body.getId();
+    if (applicationId != null) {
+      ApplicationEntity entity = applicationService.getById(body.getId());
+      if (!DockerServeUtils.checkAccess(entity)) {
+        throw new ApplicationException(DockerServeStatusCode.APPLICATION_UNAUTHORIZED_ACCESS);
+      }
+      updateApplication(body);
+    } else {
+      saveApplication(body);
+    }
   }
+
 
   @GetMapping("/detail")
   @ApiOperation("查看应用详情")
@@ -87,7 +97,7 @@ public class ApplicationController extends BaseController {
       List<ServeLinkDetailVO> detailVOList = ConvertUtils.convert(serveLinkEntities,
           serveLink -> serveLinkConvert.convert(serveLink, serveService.getByIndicate(serveLink.getServeIndicate())));
       ImageEntity imageEntity = imageService.getByIndicate(serveEntity.getImageIndicate());
-      serveDetailVOList.add(serveConvert.convertToDetailVO(serveEntity, imageEntity, detailVOList));
+      serveDetailVOList.add(serveConvert.convertToDetailVO(serveEntity, imageEntity.getId(), imageEntity.getName(), detailVOList));
     }
     return applicationConvert.convert(application, serveDetailVOList);
   }
@@ -132,12 +142,30 @@ public class ApplicationController extends BaseController {
   }
 
   /**
-   * 保存应用
+   * 更新应用
    *
-   * @param body 创建应用的信息
+   * @param body 保存应用的信息
    */
   @Transactional
-  protected void saveApplication(ApplicationCreateBody body) {
+  protected void updateApplication(ApplicationSaveBody body) {
+    // TODO 直接删除会影响依赖该服务的应用
+    Long applicationId = body.getId();
+    List<ServeEntity> serveList = serveService.listByApplicationId(applicationId);
+
+    applicationService.removeById(applicationId);
+    serveService.removeByIds(ConvertUtils.convert(serveList, ServeEntity::getId));
+    serveLinkService.removeByServeIndicates(ConvertUtils.convert(serveList, ServeEntity::getServeIndicate));
+
+    saveApplication(body);
+  }
+
+  /**
+   * 保存应用
+   *
+   * @param body 保存应用的信息
+   */
+  @Transactional
+  protected void saveApplication(ApplicationSaveBody body) {
     ApplicationEntity application = applicationConvert.convert(body, SecurityUtils.getUserId());
     applicationService.save(application);
     List<ServeEntity> serveEntityList = serveService.saveServe(body.getServeList(), application.getId());
@@ -145,12 +173,12 @@ public class ApplicationController extends BaseController {
   }
 
   /**
-   * 检查创建服务中的端口信息的合法性
+   * 检查保存服务中的端口信息的合法性
    *
-   * @param serveList 创建服务信息列表
+   * @param serveList 保存服务信息列表
    */
-  private void assertPort(List<ServeCreateBody> serveList) {
-    List<List<Integer>> portList = ConvertUtils.convert(serveList, ServeCreateBody::getPortList);
+  private void assertPort(List<ServeSaveBody> serveList) {
+    List<Set<Integer>> portList = ConvertUtils.convert(serveList, ServeSaveBody::getPortList);
     portList.forEach(ports -> {
       Set<Integer> portSet = new HashSet<>();
       ports.forEach(port -> {
@@ -163,12 +191,12 @@ public class ApplicationController extends BaseController {
   }
 
   /**
-   * 检查创建服务所使用的镜像的可访问性
+   * 检查保存服务所使用的镜像的可访问性
    *
    * @param serveList 服务列表
    */
-  private void assertImage(List<ServeCreateBody> serveList) {
-    List<Integer> imageIdList = ConvertUtils.convert(serveList, ServeCreateBody::getImageId);
+  private void assertImage(List<ServeSaveBody> serveList) {
+    List<Integer> imageIdList = ConvertUtils.convert(serveList, ServeSaveBody::getImageId);
     imageIdList.stream()
         .filter(imageId -> !DockerServeUtils.checkAccess(imageService.getById(imageId)))
         .forEach(imageId -> {
@@ -177,15 +205,15 @@ public class ApplicationController extends BaseController {
   }
 
   /**
-   * 检查创建服务中链接到的服务的可访问性
+   * 检查保存服务中链接到的服务的可访问性
    *
-   * @param serveList 创建服务信息列表
+   * @param serveList 保存服务信息列表
    */
-  private void assertLinkServe(List<ServeCreateBody> serveList) {
+  private void assertLinkServe(List<ServeSaveBody> serveList) {
     serveList.stream()
-        .map(ServeCreateBody::getLinkServeList)
+        .map(ServeSaveBody::getLinkServeList)
         .flatMap(Collection::stream)
-        .map(ServeLinkCreateBody::getBeLinkServeId)
+        .map(ServeLinkSaveBody::getBeLinkServeId)
         .map(serveService::getById)
         .filter(byId -> !DockerServeUtils.checkAccess(byId))
         .forEach(byId -> {
@@ -193,14 +221,14 @@ public class ApplicationController extends BaseController {
         });
   }
 
-  private void assertAlias(List<ServeCreateBody> serveList) {
-    if (!serveLinkService.checkAlias(serveList)) {
-      throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_ALIAS_ILLEGAL);
+  private void assertLinkName(List<ServeSaveBody> serveList) {
+    if (!serveLinkService.checkName(serveList)) {
+      throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_NAME_ILLEGAL);
     }
   }
 
-  private void assertServeName(List<ServeCreateBody> serveList) {
-    List<String> serveNameList = ConvertUtils.convert(serveList, ServeCreateBody::getName);
+  private void assertServeName(List<ServeSaveBody> serveList) {
+    List<String> serveNameList = ConvertUtils.convert(serveList, ServeSaveBody::getName);
     serveNameList.stream()
         .map(serveService::getByName)
         .filter(Objects::nonNull)

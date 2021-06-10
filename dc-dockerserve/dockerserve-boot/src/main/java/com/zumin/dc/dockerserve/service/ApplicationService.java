@@ -1,5 +1,7 @@
 package com.zumin.dc.dockerserve.service;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -133,18 +135,33 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
     List<ServeEntity> serveList = serveService.listByApplicationId(application.getId());
     ComposeBOBuilder builder = ComposeBO.builder();
     serveList.forEach(serve -> {
-      List<String> linkList = ConvertUtils.convert(serveLinkService.listByServeIndicate(serve.getServeIndicate()),
-          entity -> StrUtil.isBlank(entity.getAlias()) ? entity.getBeServeIndicate() : entity.getBeServeIndicate() + ":" + entity.getAlias());
       ComposeServiceBO composeService = ComposeServiceBO.builder()
           .image(serve.getImageIndicate())
-          .container_name(serve.getContainerName())
+          .container_name(serve.getServeIndicate())
           .ports(StrUtil.split(serve.getPort(), ';'))
           .environment(StrUtil.split(serve.getEnvironment(), ';'))
-          .external_links(linkList)
+          .external_links(CollUtil.union(getApplicationLinks(serveList, serve), getOuterLinks(serve)))
           .build();
       builder.service(serve.getServeIndicate(), composeService);
     });
     return builder.build();
+  }
+
+  private List<String> getApplicationLinks(List<ServeEntity> serveList, ServeEntity nowServe) {
+    return serveList.stream()
+        .filter(serve -> !serve.getId().equals(nowServe.getId()))
+        .filter(serve -> !StrUtil.isBlank(serve.getLinkName()))
+        .map(serve -> getExternalLink(serve.getServeIndicate(), serve.getLinkName()))
+        .collect(Collectors.toList());
+  }
+
+  private List<String> getOuterLinks(ServeEntity serve) {
+    return ConvertUtils.convert(serveLinkService.listByServeIndicate(serve.getServeIndicate()),
+        entity -> getExternalLink(entity.getBeServeIndicate(), entity.getName()));
+  }
+
+  private String getExternalLink(String serveIndicate, String alias) {
+    return StrUtil.isBlank(alias) ? serveIndicate : serveIndicate + ":" + alias;
   }
 
   /**

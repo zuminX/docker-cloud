@@ -3,14 +3,15 @@ package com.zumin.dc.dockerserve.pojo.body;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@ApiModel(description = "创建服务的信息")
-public class ServeCreateBody {
+@ApiModel(description = "保存服务的信息")
+public class ServeSaveBody {
 
   @ApiModelProperty(value = "镜像ID", required = true)
   @NotNull(message = "未指定服务的镜像")
@@ -29,10 +30,14 @@ public class ServeCreateBody {
   @Length(min = 4, max = 32, message = "镜像名称的字数应在6-32之间")
   private String name;
 
+  @ApiModelProperty(value = "服务链接名", required = true)
+  @Length(max = 16, message = "链接名的字数最多为16")
+  private String linkName;
+
   @ApiModelProperty(value = "内部端口", required = true)
   @NotEmpty(message = "内部端口不能为空")
-  private List<Integer> portList;
+  private Set<Integer> portList;
 
   @ApiModelProperty(value = "链接的服务", required = true)
-  private List<ServeLinkCreateBody> linkServeList;
+  private List<ServeLinkSaveBody> linkServeList;
 }

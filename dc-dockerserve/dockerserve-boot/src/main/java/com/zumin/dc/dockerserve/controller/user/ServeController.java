@@ -58,7 +58,7 @@ public class ServeController extends BaseController {
    * @return 服务对应Docker容器的状态
    */
   private String getServeState(ServeEntity serveEntity) {
-    Container container = containerService.getByName(serveEntity.getContainerName());
+    Container container = containerService.getByName(serveEntity.getServeIndicate());
     return container == null ? ContainerState.EXITED.getName() : container.getState();
   }
 }

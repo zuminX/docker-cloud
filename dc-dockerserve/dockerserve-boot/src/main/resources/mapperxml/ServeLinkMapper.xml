@@ -7,10 +7,10 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="serve_indicate" jdbcType="VARCHAR" property="serveIndicate" />
     <result column="be_serve_indicate" jdbcType="VARCHAR" property="beServeIndicate" />
-    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, serve_indicate, be_serve_indicate, `alias`
+    id, serve_indicate, be_serve_indicate, `name`
   </sql>
 </mapper>

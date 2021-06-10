@@ -80,7 +80,7 @@ public class ReverseProxyController {
    * @return 容器
    */
   private Container getContainer(ServeEntity entity) {
-    Container container = containerService.getByName(entity.getContainerName());
+    Container container = containerService.getByName(entity.getServeIndicate());
     if (container == null || !ContainerState.isRunning(container.getState())) {
       throw new ServeException(DockerServeStatusCode.SERVE_NOT_START);
     }
