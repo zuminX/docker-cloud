@@ -85,7 +85,6 @@ public class ApplicationController extends BaseController {
     }
   }
 
-
   @GetMapping("/detail")
   @ApiOperation("查看应用详情")
   @ApiImplicitParam(name = "application", value = "应用ID", dataTypeClass = Long.class, required = true)
@@ -99,7 +98,7 @@ public class ApplicationController extends BaseController {
       ImageEntity imageEntity = imageService.getByIndicate(serveEntity.getImageIndicate());
       serveDetailVOList.add(serveConvert.convertToDetailVO(serveEntity, imageEntity.getId(), imageEntity.getName(), detailVOList));
     }
-    return applicationConvert.convert(application, serveDetailVOList);
+    return applicationConvert.convertToDetail(application, serveDetailVOList);
   }
 
   @GetMapping("/start")
@@ -166,7 +165,7 @@ public class ApplicationController extends BaseController {
    */
   @Transactional
   protected void saveApplication(ApplicationSaveBody body) {
-    ApplicationEntity application = applicationConvert.convert(body, SecurityUtils.getUserId());
+    ApplicationEntity application = applicationConvert.convertToEntity(body, SecurityUtils.getUserId());
     applicationService.save(application);
     List<ServeEntity> serveEntityList = serveService.saveServe(body.getServeList(), application.getId());
     serveLinkService.saveServeLink(body.getServeList(), serveEntityList);
@@ -221,12 +220,22 @@ public class ApplicationController extends BaseController {
         });
   }
 
+  /**
+   * 检查保存服务中链接到的链接服务名称的合法性
+   *
+   * @param serveList 服务列表
+   */
   private void assertLinkName(List<ServeSaveBody> serveList) {
     if (!serveLinkService.checkName(serveList)) {
       throw new ServeLinkException(DockerServeStatusCode.SERVE_LINK_NAME_ILLEGAL);
     }
   }
 
+  /**
+   * 检查保存服务中服务名称的合法性
+   *
+   * @param serveList 服务列表
+   */
   private void assertServeName(List<ServeSaveBody> serveList) {
     List<String> serveNameList = ConvertUtils.convert(serveList, ServeSaveBody::getName);
     serveNameList.stream()

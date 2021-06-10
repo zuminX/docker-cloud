@@ -1,7 +1,6 @@
 package com.zumin.dc.dockerserve.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,19 +8,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.core.utils.file.FileUtils;
 import com.zumin.dc.dockerserve.command.ComposeCommand;
-import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
-import com.zumin.dc.dockerserve.exception.ApplicationException;
 import com.zumin.dc.dockerserve.mapper.ApplicationMapper;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeBO;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeBO.ComposeBOBuilder;
 import com.zumin.dc.dockerserve.pojo.bo.ComposeBO.ComposeServiceBO;
-import com.zumin.dc.dockerserve.pojo.bo.ComposeServeInfo;
 import com.zumin.dc.dockerserve.pojo.entity.ApplicationEntity;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
@@ -60,25 +55,6 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
   public void stop(ApplicationEntity entity) {
     updateComposeFile(entity);
     getComposeCommand(entity.getId()).stop();
-  }
-
-  /**
-   * 获取Compose服务列表
-   *
-   * @param entity 应用
-   * @return 服务列表
-   */
-  public List<ComposeServeInfo> getComposeServeList(ApplicationEntity entity) {
-    updateComposeFile(entity);
-    ComposeCommand command = getComposeCommand(entity.getId());
-    List<String> containerIdList = command.psContainer();
-    List<String> serveIndicateList = command.psServe();
-    if (containerIdList.size() != serveIndicateList.size()) {
-      throw new ApplicationException(DockerServeStatusCode.APPLICATION_ERROR);
-    }
-    return IntStream.range(0, containerIdList.size())
-        .mapToObj(i -> new ComposeServeInfo(serveIndicateList.get(i), containerIdList.get(i)))
-        .collect(Collectors.toList());
   }
 
   /**
@@ -147,6 +123,13 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
     return builder.build();
   }
 
+  /**
+   * 获取当前服务到该服务所在应用的其他服务的链接
+   *
+   * @param serveList 服务列表
+   * @param nowServe  当前服务
+   * @return 链接列表
+   */
   private List<String> getApplicationLinks(List<ServeEntity> serveList, ServeEntity nowServe) {
     return serveList.stream()
         .filter(serve -> !serve.getId().equals(nowServe.getId()))
@@ -155,11 +138,24 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
         .collect(Collectors.toList());
   }
 
+  /**
+   * 获得应用的其他外部链接
+   *
+   * @param serve 服务
+   * @return 链接列表
+   */
   private List<String> getOuterLinks(ServeEntity serve) {
     return ConvertUtils.convert(serveLinkService.listByServeIndicate(serve.getServeIndicate()),
         entity -> getExternalLink(entity.getBeServeIndicate(), entity.getName()));
   }
 
+  /**
+   * 获得外部链接
+   *
+   * @param serveIndicate 服务标识
+   * @param alias         别名
+   * @return 链接
+   */
   private String getExternalLink(String serveIndicate, String alias) {
     return StrUtil.isBlank(alias) ? serveIndicate : serveIndicate + ":" + alias;
   }

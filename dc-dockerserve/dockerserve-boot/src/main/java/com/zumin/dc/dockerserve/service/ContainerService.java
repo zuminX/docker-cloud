@@ -53,15 +53,4 @@ public class ContainerService {
         .filter(port -> port.getPrivatePort() != null && port.getPublicPort() != null)
         .collect(Collectors.toMap(ContainerPort::getPrivatePort, ContainerPort::getPublicPort, (a, b) -> b));
   }
-
-  /**
-   * 根据容器ID获取Docker容器
-   *
-   * @param containerId 容器ID
-   * @return 容器对象
-   */
-  public Container getById(String containerId) {
-    List<Container> list = list(Collections.singletonList(containerId));
-    return list.isEmpty() ? null : list.get(0);
-  }
 }

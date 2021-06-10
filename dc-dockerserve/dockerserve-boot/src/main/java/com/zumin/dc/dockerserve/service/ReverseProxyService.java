@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
@@ -30,16 +32,12 @@ public class ReverseProxyService {
    * @param prefix    请求前缀
    * @return 请求结果
    */
-  public ResponseEntity<String> proxy(String serverUrl, String prefix) {
-    try {
-      HttpServletRequest request = ServletUtils.getRequest();
-      String redirectUrl = createProxyUrl(request, serverUrl, prefix);
-      RequestEntity<?> requestEntity = createRequestEntity(request, redirectUrl);
-      return request(requestEntity);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
-    }
+  @Retryable(value = Exception.class, backoff = @Backoff(delay = 5000L, multiplier = 2))
+  public ResponseEntity<String> proxy(String serverUrl, String prefix) throws URISyntaxException, IOException {
+    HttpServletRequest request = ServletUtils.getRequest();
+    String redirectUrl = createProxyUrl(request, serverUrl, prefix);
+    RequestEntity<?> requestEntity = createRequestEntity(request, redirectUrl);
+    return request(requestEntity);
   }
 
   /**

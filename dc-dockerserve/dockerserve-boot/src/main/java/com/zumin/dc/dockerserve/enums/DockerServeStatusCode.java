@@ -30,6 +30,7 @@ public enum DockerServeStatusCode implements StatusCode {
   SERVE_NOT_START(44, "服务未启动"),
   SERVE_ACCESS_PORT_ILLEGAL(45, "请求访问非法的端口"),
   SERVE_NAME_EXISTS(46, "该服务名已被占用，请使用其他名称"),
+  SERVE_REQUEST_FAILED(46, "请求该服务时发生了异常"),
 
   SERVE_LINK_ERROR(50, "服务器在处理服务链接时发生了错误"),
   SERVE_LINK_NAME_ILLEGAL(51, "服务链接名称不合法");

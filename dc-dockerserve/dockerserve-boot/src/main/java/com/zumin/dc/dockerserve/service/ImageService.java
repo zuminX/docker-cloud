@@ -145,6 +145,12 @@ public class ImageService extends ServiceImpl<ImageMapper, ImageEntity> {
         .build();
   }
 
+  /**
+   * 选择DockerFile处理器
+   *
+   * @param type 文件类型
+   * @return 该文件对应的处理器
+   */
   private DockerFileProcessor selectProcessor(String type) {
     if (type.equals("jar")) {
       return new DockerFileJarProcessor(ServletUtils.getParameter("javaVersion"));

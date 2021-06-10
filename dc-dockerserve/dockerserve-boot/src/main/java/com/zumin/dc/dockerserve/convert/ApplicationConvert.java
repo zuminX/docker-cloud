@@ -16,7 +16,7 @@ public interface ApplicationConvert {
 
   @Mapping(target = "updateTime", ignore = true)
   @Mapping(target = "createTime", ignore = true)
-  ApplicationEntity convert(ApplicationSaveBody body, Long userId);
+  ApplicationEntity convertToEntity(ApplicationSaveBody body, Long userId);
 
-  ApplicationDetailVO convert(ApplicationEntity entity, List<ServeDetailVO> serveList);
+  ApplicationDetailVO convertToDetail(ApplicationEntity entity, List<ServeDetailVO> serveList);
 }

@@ -17,11 +17,59 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ComposeBO {
 
+  /**
+   * Compose版本
+   */
   private String version;
+  /**
+   * Compose服务
+   */
   private Map<String, ComposeServiceBO> services;
 
   public static ComposeBOBuilder builder() {
     return new ComposeBOBuilder();
+  }
+
+  public static class ComposeBOBuilder {
+
+    private final Map<String, ComposeServiceBO> services;
+    private String version;
+
+    ComposeBOBuilder() {
+      this.version = "3";
+      this.services = new LinkedHashMap<>();
+    }
+
+    /**
+     * 设置Docker版本
+     *
+     * @param version 版本
+     * @return 当前构建器对象
+     */
+    public ComposeBOBuilder version(String version) {
+      this.version = version;
+      return this;
+    }
+
+    /**
+     * 添加Compose服务
+     *
+     * @param name    服务名称
+     * @param service 服务
+     * @return 当前构建器对象
+     */
+    public ComposeBOBuilder service(String name, ComposeServiceBO service) {
+      this.services.put(name, service);
+      return this;
+    }
+
+    public ComposeBO build() {
+      return new ComposeBO(version, services);
+    }
+
+    public String toString() {
+      return "ComposeInfo.ComposeInfoBuilder(version=" + this.version + ", services=" + this.services + ")";
+    }
   }
 
   @Data
@@ -29,11 +77,29 @@ public class ComposeBO {
   @AllArgsConstructor
   public static class ComposeServiceBO {
 
+    /**
+     * 镜像标识
+     */
     private String image;
+    /**
+     * 容器名称
+     */
     private String container_name;
+    /**
+     * 环境
+     */
     private List<String> environment;
+    /**
+     * 端口号
+     */
     private List<String> ports;
+    /**
+     * 挂载卷
+     */
     private List<String> volumes;
+    /**
+     * 外部链接
+     */
     private Collection<String> external_links;
 
     public static ComposeServiceBOBuilder builder() {
@@ -97,32 +163,4 @@ public class ComposeBO {
     }
   }
 
-  public static class ComposeBOBuilder {
-
-    private final Map<String, ComposeServiceBO> services;
-    private String version;
-
-    ComposeBOBuilder() {
-      this.version = "3";
-      this.services = new LinkedHashMap<>();
-    }
-
-    public ComposeBOBuilder version(String version) {
-      this.version = version;
-      return this;
-    }
-
-    public ComposeBOBuilder service(String name, ComposeServiceBO service) {
-      this.services.put(name, service);
-      return this;
-    }
-
-    public ComposeBO build() {
-      return new ComposeBO(version, services);
-    }
-
-    public String toString() {
-      return "ComposeInfo.ComposeInfoBuilder(version=" + this.version + ", services=" + this.services + ")";
-    }
-  }
 }

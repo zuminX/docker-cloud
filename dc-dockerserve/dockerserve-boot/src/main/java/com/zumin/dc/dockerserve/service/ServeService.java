@@ -1,16 +1,22 @@
 package com.zumin.dc.dockerserve.service;
 
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zumin.dc.common.core.utils.ConvertUtils;
 import com.zumin.dc.common.core.utils.PublicUtils;
+import com.zumin.dc.common.redis.utils.RedisUtils;
 import com.zumin.dc.common.web.utils.SecurityUtils;
+import com.zumin.dc.dockerserve.config.DockerServeRedisKey;
 import com.zumin.dc.dockerserve.convert.ServeConvert;
+import com.zumin.dc.dockerserve.enums.DockerServeStatusCode;
+import com.zumin.dc.dockerserve.exception.ServeException;
 import com.zumin.dc.dockerserve.mapper.ImageMapper;
 import com.zumin.dc.dockerserve.mapper.ServeMapper;
 import com.zumin.dc.dockerserve.pojo.body.ServeSaveBody;
 import com.zumin.dc.dockerserve.pojo.entity.ServeEntity;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
 
+  /**
+   * 服务访问令牌的过期时间（以分钟为单位）
+   */
+  private final static int ACCESS_TOKEN_TTL = 10;
   private final ImageMapper imageMapper;
   private final ServeConvert serveConvert;
+  private final RedisUtils redisUtils;
 
   /**
    * 列出应用的所有服务
@@ -108,6 +119,20 @@ public class ServeService extends ServiceImpl<ServeMapper, ServeEntity> {
 
   private String generateServeIndicate(Long userId) {
     return PublicUtils.getRandomIdentity() + "-" + userId;
+  }
+
+  public String generateAccessToken(Integer port) {
+    String key = UUID.fastUUID().toString(true);
+    redisUtils.set(DockerServeRedisKey.ACCESS_TOKEN_PREFIX + key, port, ACCESS_TOKEN_TTL, TimeUnit.MINUTES);
+    return key;
+  }
+
+  public Integer getAccessPort(String token) {
+    Integer port = redisUtils.get(DockerServeRedisKey.ACCESS_TOKEN_PREFIX + token);
+    if (port == null) {
+      throw new ServeException(DockerServeStatusCode.SERVE_UNAUTHORIZED_ACCESS);
+    }
+    return port;
   }
 
 }
